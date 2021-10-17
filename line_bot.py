@@ -52,7 +52,7 @@ def handle_message(event):
         TextSendMessage(text=event.message.text))
     '''
     message = event.message.text
-    texts = message.split(1)
+    texts = message.split(' ', 1)
     if(texts[0] == '說明/'):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
     if(texts[0] == '點餐/'):
