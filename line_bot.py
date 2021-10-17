@@ -37,7 +37,7 @@ def callback():
 
     return 'OK'
 
-description = '指令輸入格式:\n(指令)/ (內容)\n\n指令:\n說明、點餐、點餐清單'
+description = '指令輸入格式:\n(指令)/ (內容)\n\n指令:\n說明、點餐、list'
 
 # decorator 判斷 event 為 MessageEvent
 # event.message 為 TextMessage 
@@ -60,13 +60,12 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
     if(texts[0] == '點餐/'):
         profile = line_bot_api.get_profile(userId)
-        f = open('tmp.txt', 'a', encoding = 'utf-8')
-        f.write(profile.display_name + ' ' + texts[1] + '\n')
+        f = open('tmp.txt', 'a', encoding = 'utf-8').write(profile.display_name + ' ' + texts[1] + '\n')
         f.close()
-    if(texts[0] == '點餐清單/'):
-        f = open('tmp.txt', 'r', encoding = 'utf-8')
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(f.read()))
-        f.close() 
+    if(texts[0] == 'list/'):
+        lines = open('tmp.txt', 'r', encoding = 'utf-8').readlines()
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + '共' + str(lines.size()) + '份餐點')
+        open('tmp.txt', 'w').close()
 
 if __name__ == '__main__':
     app.run()
