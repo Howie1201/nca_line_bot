@@ -53,7 +53,7 @@ def handle_message(event):
     '''
     print(event)
     
-    userId = event.source.userId
+    userId = event.source.user_id
     message = event.message.text
     texts = message.split(' ', 1)
     
