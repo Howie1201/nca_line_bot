@@ -7,6 +7,8 @@ Created on Thu Jul 23 15:50:24 2020
 
 from __future__ import unicode_literals
 import os
+import json
+
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -37,7 +39,7 @@ def callback():
 
     return 'OK'
 
-description = '指令輸入格式:\n(指令)/ (內容)\n\n指令:\n說明、點餐、list'
+description = '指令輸入格式:\n(指令)/ (內容)\n\n指令:\n說明、點餐、settle、clear'
 
 # decorator 判斷 event 為 MessageEvent
 # event.message 為 TextMessage 
@@ -54,19 +56,34 @@ def handle_message(event):
     
     userId = event.source.user_id
     message = event.message.text
-    texts = message.split(' ', 1)
+    texts = message.split(' ', 2)
     
     if(texts[0] == '說明/'):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
     if(texts[0] == '點餐/'):
         profile = line_bot_api.get_profile(userId)
-        with open('tmp.txt', 'a', encoding = 'utf-8') as f:
-            f.write(profile.display_name + ' ' + texts[1] + '\n')
-    if(texts[0] == 'list/'):
-        with open('tmp.txt', 'r', encoding = 'utf-8') as f:
+        with open('data.json', 'r') as jsonFile:
+            data = json.load(jsonFile)
+        data['amount'] += int(texts[2])
+        with open('data.json', 'w') as jsonFile:
+            json.dump(data, jsonFile)
+        with open('order.txt', 'a', encoding = 'utf-8') as f:
+            f.write(profile.display_name + ' ' + texts[1] + ' ' + texts[2] + '\n')
+    if(texts[0] == 'settle/'):
+        with open('data.json', 'r') as jsonFile:
+            data = json.load(jsonFile)
+        with open('order.txt', 'r', encoding = 'utf-8') as f:
             lines = f.readlines()
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + '共' + str(lines.size()) + '份餐點')
-        f = open('tmp.txt', 'w').close()
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + str(lines.size()) + '份餐點 共' + data['amount'] + '元')
+    if(texts[0] == 'clear/'):
+        with open('data.json', 'r') as jsonFile:
+            data = json.load(jsonFile)
+        data['amount'] = 0
+        with open('data.json', 'w') as jsonFile:
+            json.dump(data, jsonFile)
+        with open('order.txt', 'w') as f:
+            f.write('')
+
 
 if __name__ == '__main__':
     app.run()
