@@ -76,7 +76,7 @@ def handle_message(event):
             data = json.load(jsonFile)
         with open('order.txt', 'r', encoding = 'utf-8') as f:
             lines = f.readlines()
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + str(lines.size()) + '份餐點 共' + data['amount'] + '元'))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + str(len(lines)) + '份餐點 共' + data['amount'] + '元'))
     
 
     elif(texts[0] == 'clear/'):
