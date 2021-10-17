@@ -60,11 +60,12 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
     if(texts[0] == '點餐/'):
         profile = line_bot_api.get_profile(userId)
-        f = open('tmp.txt', 'a', encoding = 'utf-8').write(profile.display_name + ' ' + texts[1] + '\n')
-        f.close()
+        with open('tmp.txt', 'a', encoding = 'utf-8') as f:
+            f.write(profile.display_name + ' ' + texts[1] + '\n')
     if(texts[0] == 'list/'):
-        lines = open('tmp.txt', 'r', encoding = 'utf-8').readlines()
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + '共' + str(lines.size()) + '份餐點')
+        with open('tmp.txt', 'r', encoding = 'utf-8') as f:
+            lines = f.readlines()
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + '共' + str(lines.size()) + '份餐點')
         open('tmp.txt', 'w').close()
 
 if __name__ == '__main__':
