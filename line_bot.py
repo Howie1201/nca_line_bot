@@ -64,7 +64,7 @@ def handle_message(event):
         f.write(profile.display_name + ' ' + texts[1] + '\n')
         f.close()
     if(texts[0] == '點餐清單/'):
-        f = open('tmp.txt', 'r' encoding = 'utf-8')
+        f = open('tmp.txt', 'r', encoding = 'utf-8')
         line_bot_api.reply_message(event.reply_token, TextSendMessage(f.read()))
         f.close() 
 
