@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 line_bot_api = LineBotApi('KbUSP5ShwG5gziWRdy3niYUieAZaYlDc2YMW1HB3Ao05YRm+DKUar29lK0lfqjeMqzLRm1MLALf/R4jIV/k+98YxIR40SryCI8qsokVBe31heMMafyPQSI89odk42Ts1dD9b35gyPMCkOhHEGp+M/wdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('b33a01e1e548c7b39a732d62245e1d36')
-
+'''
 # 此為 Webhook callback endpoint
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -41,7 +41,7 @@ def callback():
         abort(400)
 
     return 'OK'
-
+'''
 
 # decorator 負責判斷 event 為 MessageEvent 實例，event.message 為 TextMessage 實例。所以此為處理 TextMessage 的 handler
 @handler.add(MessageEvent, message=TextMessage)
