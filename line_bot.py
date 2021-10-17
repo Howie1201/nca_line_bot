@@ -5,15 +5,13 @@ Created on Thu Jul 23 15:50:24 2020
 @author: jacky
 """
 
+from __future__ import unicode_literals
+import os
 from flask import Flask, request, abort
-from linebot.api import LineBotApi
-from linebot.webhook import WebhookHandler
-from linebot.exceptions import (
-    InvalidSignatureError
-)
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
-)
+from linebot import LineBotApi, WebhookHandler
+from linebot.exceptions import InvalidSignatureError
+
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 app = Flask(__name__)
 
