@@ -58,10 +58,10 @@ def handle_message(event):
     message = event.message.text
     texts = message.split(' ', 2)
     
-    if(texts[0] == '說明/'):
+    if texts[0] == '說明/':
         line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
         
-    elif(texts[0] == '點餐/'):
+    elif texts[0] == '點餐/':
         profile = line_bot_api.get_profile(userId)
         with open('data.json', 'r') as jsonFile:
             data = json.load(jsonFile)
@@ -71,14 +71,14 @@ def handle_message(event):
         with open('order.txt', 'a', encoding = 'utf-8') as f:
             f.write(profile.display_name + ' ' + texts[1] + ' ' + texts[2] + '\n')
             
-    elif(texts[0] == 'settle/'):
+    elif texts[0] == 'settle/':
         with open('data.json', 'r') as jsonFile:
             data = json.load(jsonFile)
         with open('order.txt', 'r', encoding = 'utf-8') as f:
             lines = f.readlines()
             line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + str(lines.size()) + '份餐點 共' + data['amount'] + '元')
     
-    elif(texts[0] == 'clearOrder/'):
+    elif texts[0] == 'clearOrder/':
         with open('data.json', 'r') as jsonFile:
             data = json.load(jsonFile)
         data['amount'] = 0
