@@ -66,7 +66,7 @@ def handle_message(event):
         with open('tmp.txt', 'r', encoding = 'utf-8') as f:
             lines = f.readlines()
             line_bot_api.reply_message(event.reply_token, TextSendMessage(lines + '共' + str(lines.size()) + '份餐點')
-        open('tmp.txt', 'w').close()
+        f = open('tmp.txt', 'w').close()
 
 if __name__ == '__main__':
     app.run()
