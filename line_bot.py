@@ -61,7 +61,7 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
     if(texts[0] == '點餐/'):
         profile = line_bot_api.get_profile(userId)
-        order_list.append(profile.display_name + ' ' + texts[1] + '\n')
+        order_list += (profile.display_name + ' ' + texts[1] + '\n')
     if(texts[0] == '點餐清單/'):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(order_list))
             
