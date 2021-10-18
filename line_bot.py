@@ -39,7 +39,7 @@ def callback():
 
     return 'OK'
 
-description = '指令輸入格式:\n(指令)/ (內容)\n\n指令:\n說明、點餐、settle、clear'
+description = '指令輸入格式:\n(指令)/ (內容)\n\n指令:\n說明、點餐、統計、clear'
 
 # decorator 判斷 event 為 MessageEvent
 # event.message 為 TextMessage 
@@ -71,12 +71,12 @@ def handle_message(event):
         with open('order.txt', 'a', encoding = 'utf-8') as f:
             f.write(profile.display_name + ' ' + texts[1] + ' ' + texts[2] + '\n')
             
-    elif texts[0] == 'settle/':
+    elif texts[0] == '統計/':
         with open('data.json', 'r') as jsonFile:
             data = json.load(jsonFile)
         with open('order.txt', 'r', encoding = 'utf-8') as f:
             lines = f.readlines()
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(str(lines) + str(len(lines)) + '份餐點 共' + str(data['amount']) + '元'))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(line for line in lines + str(len(lines)) + '份餐點 共' + str(data['amount']) + '元'))
     
 
     elif(texts[0] == 'clear/'):
