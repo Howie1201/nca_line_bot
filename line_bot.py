@@ -66,6 +66,7 @@ def handle_message(event):
         with open('data.json', 'r') as jsonFile: 
             data = json.load(jsonFile)
         data['amount'] += int(texts[2])
+        data['order_no'] += 1
         with open('data.json', 'w') as jsonFile:
             json.dump(data, jsonFile)
         with open('order.txt', 'a', encoding = 'utf-8') as f:
@@ -75,14 +76,14 @@ def handle_message(event):
         with open('data.json', 'r') as jsonFile:
             data = json.load(jsonFile)
         with open('order.txt', 'r', encoding = 'utf-8') as f:
-            lines = f.readlines()
-            line_bot_api.reply_message(event.reply_token, TextSendMessage((line for line in lines) + str(len(lines)) + '份餐點 共' + str(data['amount']) + '元'))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(f.read() + '\n' + str(data['order_no']) + '份餐點 共' + str(data['amount']) + '元'))
     
 
     elif(texts[0] == 'clear/'):
         with open('data.json', 'r') as jsonFile:
             data = json.load(jsonFile)
         data['amount'] = 0
+        data['order_no'] = 0
         with open('data.json', 'w') as jsonFile:
             json.dump(data, jsonFile)
         with open('order.txt', 'w') as f:
