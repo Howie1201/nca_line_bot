@@ -70,7 +70,7 @@ def handle_message(event):
         with open('data/data.json', 'w', encoding = 'utf-8') as jsonFile: 
             json.dump(data, jsonFile)
             
-        with open('data/restaurant/' + texts[1] + '.csv', 'r', encoding = 'utf-8') as csvFile: 
+        with open('data/restaurant/' + texts[1] + '.csv', newline = '', encoding = 'utf-8') as csvFile: 
             menu = csv.reader(csvFile)
             for row in menu:
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(row[0] + '. ' + row[1] + ' ' + row[2] + '\n'))
@@ -84,11 +84,11 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage('收到'))          
             
     elif texts[0] == '統計':  
-        with open('data/order.csv', 'r', encoding = 'utf-8') as csvFile: 
+        with open('data/order.csv', newline = '', encoding = 'utf-8') as csvFile: 
             orders = csv.reader(csvFile)
         with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
             data = json.load(jsonFile)
-        with open('data/restaurant/' + data['restaurant'] + '.csv', 'r', encoding = 'utf-8') as csvFile: 
+        with open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8') as csvFile: 
             menu = csv.reader(csvFile)
             
         food_nums = {}
@@ -106,11 +106,11 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply + '共' + str(total) + '份' + str(total_price) + '元'))
     
     elif texts[0] == '明細':
-        with open('data/order.csv', 'r', encoding = 'utf-8') as csvFile: 
+        with open('data/order.csv', newline = '', encoding = 'utf-8') as csvFile: 
             orders = csv.reader(csvFile)
         with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
             data = json.load(jsonFile)
-        with open('data/restaurant/' + data['restaurant'] + '.csv', 'r', encoding = 'utf-8') as csvFile: 
+        with open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8') as csvFile: 
             menu = csv.reader(csvFile)
         
         order_no = 1
