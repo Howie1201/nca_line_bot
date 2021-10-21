@@ -49,15 +49,14 @@ description = '指令輸入格式:\n(指令)/ (內容)\n\n指令:\n說明、吃�
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # 決定要回傳什麼 Component 到 Channel
-    '''
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.message.text))
-    '''
+
     print(event)
     
+    # get user id and message
     userId = event.source.user_id
     message = event.message.text
+    
+    # handle command
     texts = message.split('/', 1)
     
     if texts[0] == '說明':
@@ -94,7 +93,7 @@ def handle_message(event):
             if int(order[1]) in food_nums:
                 food_nums[int(order[1])] += 1
             else:
-                foor_nums[int(order[1])] = 1
+                food_nums[int(order[1])] = 1
             
         jsonFile = open('data/data.json', 'r', encoding = 'utf-8')
         data = json.load(jsonFile)
