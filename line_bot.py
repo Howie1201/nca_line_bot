@@ -72,8 +72,10 @@ def handle_message(event):
             
         with open('data/restaurant/' + texts[1] + '.csv', newline = '', encoding = 'utf-8') as csvFile: 
             menu = csv.reader(csvFile)
-            for row in menu:
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(row[0] + '. ' + row[1] + ' ' + row[2] + '\n'))
+        reply = ''
+        for row in menu:
+            reply += ( row[0] + '. ' + row[1] + ' ' + row[2] + '\n' )
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
         
     elif texts[0] == '點':
         profile = line_bot_api.get_profile(userId)
