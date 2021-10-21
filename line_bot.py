@@ -91,7 +91,10 @@ def handle_message(event):
         orders = csv.reader(orderFile)
         food_nums = {}
         for order in orders:
-            food_nums[int(order[1])] += 1
+            if int(order[1]) in food_nums:
+                food_nums[int(order[1])] += 1
+            else:
+                foor_nums[int(order[1])] = 1
             
         jsonFile = open('data/data.json', 'r', encoding = 'utf-8')
         data = json.load(jsonFile)
