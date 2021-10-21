@@ -72,10 +72,10 @@ def handle_message(event):
             
         with open('data/restaurant/' + texts[1] + '.csv', newline = '', encoding = 'utf-8') as csvFile: 
             menu = csv.reader(csvFile)
-        reply = ''
-        for row in menu:
-            reply += ( row[0] + '. ' + row[1] + ' ' + row[2] + '\n' )
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+            reply = ''
+            for row in menu:
+                reply += ( row[0] + '. ' + row[1] + ' ' + row[2] + '\n' )
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
         
     elif texts[0] == '點':
         profile = line_bot_api.get_profile(userId)
@@ -86,40 +86,37 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage('收到'))          
             
     elif texts[0] == '統計':  
+        food_nums = {}
         with open('data/order.csv', newline = '', encoding = 'utf-8') as csvFile: 
             orders = csv.reader(csvFile)
+            for order in orders:
+                food_nums[int(order[1])] += 1
         with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
             data = json.load(jsonFile)
         with open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8') as csvFile: 
             menu = csv.reader(csvFile)
-            
-        food_nums = {}
-        for order in orders:
-            food_nums[int(order[1])] += 1
-            
-        reply = ''
-        total = 0
-        total_price = 0
-        for food_num in food_nums:
-            reply += ( menu[food_num][1] + ' ' + str(food_nums[food_num]) + '份\n')
-            total += food_nums[food_num]
-            total_price += ( int(menu[food_num][2]) * food_nums[food_num] )
-            
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply + '共' + str(total) + '份' + str(total_price) + '元'))
+            reply = ''
+            total = 0
+            total_price = 0
+            for food_num in food_nums:
+                reply += ( menu[food_num][1] + ' ' + str(food_nums[food_num]) + '份\n')
+                total += food_nums[food_num]
+                total_price += ( int(menu[food_num][2]) * food_nums[food_num] )           
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(reply + '共' + str(total) + '份' + str(total_price) + '元'))
     
     elif texts[0] == '明細':
-        with open('data/order.csv', newline = '', encoding = 'utf-8') as csvFile: 
-            orders = csv.reader(csvFile)
+        
         with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
             data = json.load(jsonFile)
         with open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8') as csvFile: 
             menu = csv.reader(csvFile)
-        
-        order_no = 1
-        reply = ''
-        for order in orders:
-            reply += ( str(order_no) + '. ' + order[0] + '/' + menu[int(order[1])][1] + '/' + menu[int(order[1])][2] + '元\n' )
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+        with open('data/order.csv', newline = '', encoding = 'utf-8') as csvFile: 
+            orders = csv.reader(csvFile)
+            order_no = 1
+            reply = ''
+            for order in orders:
+                reply += ( str(order_no) + '. ' + order[0] + '/' + menu[int(order[1])][1] + '/' + menu[int(order[1])][2] + '元\n' )
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
         '''
         img = Image.new('RGB', (600, 800), color=(255, 255, 255))
         font = ImageFont.truetype('arial.ttf', size = 24)
