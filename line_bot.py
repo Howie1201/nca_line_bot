@@ -88,7 +88,7 @@ def handle_message(event):
     elif texts[0] == '統計':  
         
         orderFile = open('data/order.csv', newline = '', encoding = 'utf-8')
-        orders = csv.reader(csvFile)
+        orders = csv.reader(orderFile)
         food_nums = {}
         for order in orders:
             food_nums[int(order[1])] += 1
@@ -97,7 +97,7 @@ def handle_message(event):
         data = json.load(jsonFile)
         
         menuFile = open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8')
-        menu = csv.reader(csvFile)
+        menu = csv.reader(menuFile)
         
         reply = ''
         total = 0
