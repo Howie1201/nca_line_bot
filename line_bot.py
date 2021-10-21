@@ -87,7 +87,7 @@ def handle_message(event):
     elif texts[0] == '統計':  
         
         orderFile = open('data/order.csv', newline = '', encoding = 'utf-8')
-        orders = csv.reader(orderFile)
+        orders = list( csv.reader(orderFile) )
         food_nums = {}
         for order in orders:
             if int(order[1]) in food_nums:
@@ -99,7 +99,7 @@ def handle_message(event):
         data = json.load(jsonFile)
         
         menuFile = open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8')
-        menu = csv.reader(menuFile)
+        menu = list( csv.reader(menuFile) )
         
         reply = ''
         total = 0
@@ -116,17 +116,25 @@ def handle_message(event):
         
     elif texts[0] == '明細':
         
-        with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
-            data = json.load(jsonFile)
-        with open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8') as csvFile: 
-            menu = csv.reader(csvFile)
-        with open('data/order.csv', newline = '', encoding = 'utf-8') as csvFile: 
-            orders = csv.reader(csvFile)
-            order_no = 1
-            reply = ''
-            for order in orders:
-                reply += ( str(order_no) + '. ' + order[0] + '/' + menu[int(order[1])][1] + '/' + menu[int(order[1])][2] + '元\n' )
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+        orderFile = open('data/order.csv', newline = '', encoding = 'utf-8')
+        orders = list( csv.reader(csvFile) )
+        
+        jsonFile = open('data/data.json', 'r', encoding = 'utf-8')
+        data = json.load(jsonFile)
+        
+        menuFile = open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8')
+        menu = list( csv.reader(csvFile) )
+        
+        order_no = 1
+        reply = ''
+        for order in orders:
+            reply += ( str(order_no) + '. ' + order[0] + '/' + menu[int(order[1])][1] + '/' + menu[int(order[1])][2] + '元\n' )
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+        
+        menuFile.close()
+        jsonFile.close()
+        orderFile.close()    
+        
         '''
         img = Image.new('RGB', (600, 800), color=(255, 255, 255))
         font = ImageFont.truetype('arial.ttf', size = 24)
