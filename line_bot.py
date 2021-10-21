@@ -83,17 +83,20 @@ def handle_message(event):
         
     elif texts[0] == '點':
         profile = line_bot_api.get_profile(userId)
-        with open('data/order.csv', 'a+', encoding = 'utf-8') as f:
-            orders = texts[1].split(',')
-            for order in orders:
-                f.write(profile.display_name + ',' + order + '\n')
-            line_bot_api.reply_message(event.reply_token, TextSendMessage('收到'))          
+        f = open('data/order.csv', 'a+', encoding = 'utf-8')
+        orders = texts[1].split(',')
+        for order in orders:
+            f.write(profile.display_name + ',' + order + '\n')
+        line_bot_api.reply_message(event.reply_token, TextSendMessage('收到'))      
+        f.close()
             
             
     elif texts[0] == '統計':  
         
         orderFile = open('data/order.csv', newline = '', encoding = 'utf-8')
         orders = list( csv.reader(orderFile) )
+        
+        # count the numbers of each items
         food_nums = {}
         for order in orders:
             if int(order[1]) in food_nums:
@@ -107,6 +110,7 @@ def handle_message(event):
         menuFile = open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8')
         menu = list( csv.reader(menuFile) )
         
+        # print items, numbers, total numbers, total price, etc.
         reply = ''
         total = 0
         total_price = 0
@@ -132,6 +136,7 @@ def handle_message(event):
         menuFile = open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8')
         menu = list( csv.reader(menuFile) )
         
+        # print order detail
         order_no = 1
         reply = ''
         for order in orders:
@@ -143,8 +148,9 @@ def handle_message(event):
         jsonFile.close()
         orderFile.close()        
         
+        # create and send order datail image
         img = Image.new('RGB', (600, 800), color=(255, 255, 255))
-        font = ImageFont.truetype('arial.ttf', size = 24)
+        font = ImageFont.truetype('data/arial.ttf', size = 24)
         iDraw = ImageDraw.Draw(img)
         iDraw.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
         
