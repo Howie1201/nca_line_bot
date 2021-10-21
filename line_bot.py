@@ -15,7 +15,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 
 app = Flask(__name__)
 
@@ -136,25 +136,26 @@ def handle_message(event):
         reply = ''
         for order in orders:
             reply += ( str(order_no) + '. ' + order[0] + '/' + menu[int(order[1])][1] + '/' + menu[int(order[1])][2] + '元\n' )
+            order_no += 1
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
         
         menuFile.close()
         jsonFile.close()
-        orderFile.close()    
+        orderFile.close()        
         
-        '''
         img = Image.new('RGB', (600, 800), color=(255, 255, 255))
         font = ImageFont.truetype('arial.ttf', size = 24)
-        d = ImageDraw.Draw(img)
-        d.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
+        iDraw = ImageDraw.Draw(img)
+        iDraw.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
         
-        img.save('data/tmp.png')
-        '''
+        img.save('data/detail.png')
+        line_bot_api.reply_message(event.reply_token, ImageSendMessage('data/detail.png', 'data/detail.png'))
+        
 
 
     elif texts[0] == 'clear':
         os.remove('data/order.csv')
-        os.remove('data/tmp.png')
+        os.remove('data/detail.png')
         '''
         with open('data/data.json', 'r') as jsonFile:
             data = json.load(jsonFile)
