@@ -179,16 +179,17 @@ def handle_message(event):
     elif command == '統計':                        
         foods = countOrder()
         menu = getMenu()
-        printStatistic(foods, menu)
+        reply = printStatistic(foods, menu)
         
     elif command == '明細':          
         with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
             orders = list( csv.reader(orderFile) )           
         menu = getMenu()
-        printDetail(orders, menu)
+        reply = printDetail(orders, menu)
         
     elif command == 'clear':
         os.remove('data/order.csv')
+        reply = '清除資料'
     
     line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
     
