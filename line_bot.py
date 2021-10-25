@@ -3,6 +3,8 @@
 Created on Thu Jul 23 15:50:24 2020
 
 @author: jacky
+
+version: 2.4
 """
 
 from __future__ import unicode_literals
@@ -41,15 +43,113 @@ def callback():
 
     return 'OK'
 
-description = '指令輸入格式:\n(指令)/ (內容)\n\n指令:\n說明、吃、點、統計、明細、clear'
+
+def checkAuthority(userId):
+    return True
+
+
+def setRestaurant(restaurant):
+    with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
+        data = json.load(jsonFile)
+    data['restaurant'] = restaurant
+    with open('data/data.json', 'w', encoding = 'utf-8') as jsonFile: 
+        json.dump(data, jsonFile)
+    return restaurant
+
+def getMenu():
+    with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile:
+        data = json.load(jsonFile)
+    restaurant_path = 'data/restaurant/' + data['restaurant'] + '.csv'
+    if os.path.isfile(restaurant_path):
+        with open(restaurant_path, newline = '', encoding = 'utf-8') as menuFile:
+            menu = list( csv.reader(menuFile) )
+            return menu
+    else:
+        return []
+    
+
+def printMenu(restaurant):
+    restaurant_path = 'data/restaurant/' + restaurant + '.csv'
+    if os.path.isfile(restaurant_path)
+        menuFile = open(restaurant_path, newline = '', encoding = 'utf-8')
+        menu = list( csv.reader(menuFile) )        
+        reply = ''
+        for food in menu:
+            reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+        menuFile.close()
+    else:           
+        line_bot_api.reply_message(event.reply_token, TextSendMessage('查無此餐廳'))    
+
+def addOrder(userId, orders):
+    f = open('data/order.csv', 'a+', encoding = 'utf-8')
+    profile = line_bot_api.get_profile(userId)         
+    orders = orders.split('/')     
+    for order in orders:
+        f.write(profile.display_name + ',' + order + '\n')               
+    line_bot_api.reply_message(event.reply_token, TextSendMessage('收到'))      
+    f.close()
+
+def countOrder():
+    with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
+        orders = list(csv.reader(orderFile))
+    foods = {}
+    for order in orders:
+        if order[1] in foods:
+            foods[order[1]] += 1
+        else:
+            foods[order[1]] = 1
+    return foods
+
+def printStatistic(menu):
+    reply = ''
+    total = 0
+    total_price = 0
+    # if database has restaurant's menu 
+    if menu:
+        # print items, numbers, total numbers, total price, etc.               
+        for food in foods:
+            food_name = menu[int(food)][1] if food.isnumeric() else food
+            food_price = menu[int(food)][2] if food.isnumeric() else 0
+            reply += ( food_name + ' ' + str(foods[food]) + '份\n')
+            total += foods[food]
+            total_price += ( int(food_price) * foods[food] )               
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply + '共' + str(total) + '份' + str(total_price) + '元'))
+
+    else:             
+        for food in foods:
+            reply += ( food + ' ' + str(foods[food]) + '份\n')
+            total += foods[food]             
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply + '共' + str(total) + '份'))
+    
+def printDetail():
+    order_no = 1
+    reply = ''
+    if menu:               
+        # print order detail
+        for order in orders:
+            food_name = menu[int(order[1])][1]
+            food_price = menu[int(order[1])][2]
+            reply += ( str(order_no) + '. ' + order[0] + '/' + food_name + '/' + food_price + '元\n' )
+            order_no += 1
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+        menuFile.close()
+        
+    else:
+        for order in orders:
+            reply += ( str(order_no) + '. ' + order[0] + '/' + order[1] + '\n' )
+            order_no += 1
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+
+
+description = '指令輸入格式:\n(指令)/(內容1)/(內容2)...\n\n指令:\n說明、吃、點、統計、明細、clear'
 
 # decorator 判斷 event 為 MessageEvent
 # event.message 為 TextMessage 
 # 所以此為處理 TextMessage 的 handler
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # 決定要回傳什麼 Component 到 Channel
-
+    # TODO: optimization
     print(event)
     
     # get user id and message
@@ -57,122 +157,55 @@ def handle_message(event):
     message = event.message.text
     
     # handle command
-    texts = message.split('/', 1)
+    if '/' not in message:
+        return
+    message = message.split().split('/', 1)
+    command = message[0]
+    parameters = message[1]
     
-    if texts[0] == '說明':
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
+    
+    match command:
         
-    elif texts[0] == '吃':
-        # set restaurant 
-        with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
-            data = json.load(jsonFile)
-        data['restaurant'] = texts[1]
-        with open('data/data.json', 'w', encoding = 'utf-8') as jsonFile: 
-            json.dump(data, jsonFile)
+        case '說明':
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
             
-        menuFile = open('data/restaurant/' + texts[1] + '.csv', newline = '', encoding = 'utf-8')
-        menu = list( csv.reader(menuFile) )
-        
-        reply = ''
-        for food in menu:
-            reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
-        
-        menuFile.close()
-        
-        
-    elif texts[0] == '點':
-        profile = line_bot_api.get_profile(userId)
-        f = open('data/order.csv', 'a+', encoding = 'utf-8')
-        orders = texts[1].split(',')
-        for order in orders:
-            f.write(profile.display_name + ',' + order + '\n')
-        line_bot_api.reply_message(event.reply_token, TextSendMessage('收到'))      
-        f.close()
+        case '吃':
+            checkAuthority(userId)
+            # set restaurant            
+            # if database has restaurant's menu, print it
+            restaurant = setRestaurant(parameters)
+            printMenu(restaurant)
+                                                        
+        case '點':
+            addOrder(userId, parameters)
+                            
+        case '統計':                        
+            foods = countOrder()
+            menu = getMenu()
+            printStatistic(menu)           
             
-            
-    elif texts[0] == '統計':  
-        
-        orderFile = open('data/order.csv', newline = '', encoding = 'utf-8')
-        orders = list( csv.reader(orderFile) )
-        
-        # count the numbers of each items
-        food_nums = {}
-        for order in orders:
-            if int(order[1]) in food_nums:
-                food_nums[int(order[1])] += 1
-            else:
-                food_nums[int(order[1])] = 1
-            
-        jsonFile = open('data/data.json', 'r', encoding = 'utf-8')
-        data = json.load(jsonFile)
-        
-        menuFile = open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8')
-        menu = list( csv.reader(menuFile) )
-        
-        # print items, numbers, total numbers, total price, etc.
-        reply = ''
-        total = 0
-        total_price = 0
-        for food_num in food_nums:
-            reply += ( menu[food_num][1] + ' ' + str(food_nums[food_num]) + '份\n')
-            total += food_nums[food_num]
-            total_price += ( int(menu[food_num][2]) * food_nums[food_num] )           
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply + '共' + str(total) + '份' + str(total_price) + '元'))
-       
-        menuFile.close()
-        jsonFile.close()
-        orderFile.close()
-        
-        
-    elif texts[0] == '明細':
-        
-        orderFile = open('data/order.csv', newline = '', encoding = 'utf-8')
-        orders = list( csv.reader(orderFile) )
-        
-        jsonFile = open('data/data.json', 'r', encoding = 'utf-8')
-        data = json.load(jsonFile)
-        
-        menuFile = open('data/restaurant/' + data['restaurant'] + '.csv', newline = '', encoding = 'utf-8')
-        menu = list( csv.reader(menuFile) )
-        
-        # print order detail
-        order_no = 1
-        reply = ''
-        for order in orders:
-            reply += ( str(order_no) + '. ' + order[0] + '/' + menu[int(order[1])][1] + '/' + menu[int(order[1])][2] + '元\n' )
-            order_no += 1
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
-        
-        menuFile.close()
-        jsonFile.close()
-        orderFile.close()        
-        
-        '''
-        # create and send order datail image
-        img = Image.new('RGB', (600, 800), color=(255, 255, 255))
-        font = ImageFont.truetype('data/arial.ttf', size = 24)
-        iDraw = ImageDraw.Draw(img)
-        iDraw.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
-        
-        img.save('data/detail.png')
-        line_bot_api.reply_message(event.reply_token, ImageSendMessage('data/detail.png', 'data/detail.png'))
-        '''
+        case '明細':          
+            with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
+                orders = list( csv.reader(orderFile) )           
+            menu = getMenu()
+            printDetail(orders, menu)
 
+            '''
+            TODO:
+            
+            # create and send order datail image
+            img = Image.new('RGB', (600, 800), color=(255, 255, 255))
+            font = ImageFont.truetype('data/arial.ttf', size = 24)
+            iDraw = ImageDraw.Draw(img)
+            iDraw.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
+            
+            img.save('data/detail.png')
+            line_bot_api.reply_message(event.reply_token, ImageSendMessage('data/detail.png', 'data/detail.png'))
+            '''
 
-    elif texts[0] == 'clear':
-        os.remove('data/order.csv')
-        os.remove('data/detail.png')
-        '''
-        with open('data/data.json', 'r') as jsonFile:
-            data = json.load(jsonFile)
-        data['amount'] = 0
-        data['order_no'] = 0
-        with open('data/data.json', 'w') as jsonFile:
-            json.dump(data, jsonFile)
-        with open('data/order.txt', 'w') as f:
-            f.write('')
-        '''
+        case 'clear':
+            os.remove('data/order.csv')
+            #os.remove('data/detail.png')
 
 
 if __name__ == '__main__':

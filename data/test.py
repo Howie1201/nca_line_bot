@@ -1,8 +1,28 @@
 # -*- coding: utf-8 -*-
 import json
 import csv
-from PIL import Image, ImageDraw, ImageFont
+#from PIL import Image, ImageDraw, ImageFont
 import io
+import os
+
+'''
+bool1 = os.path.isfile('restaurant/a.csv')
+bool2 = os.path.isfile('restaurant/皇上皇.csv')
+print(str(bool1) + ' ' + str(bool2))
+'''
+'''
+def a()
+
+if a():
+    print('ya')
+else:
+    print('no')
+    
+def a():
+    return []
+
+
+'''
 
 '''
 with open('data/restaurant.json', 'r', encoding = 'utf-8') as jsonFile: 
@@ -36,10 +56,6 @@ d.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
 img.save('tmp.png')
 '''
 
-index = 1
-
-for i in range(5):
-    print(str(index=index+1))
 
 #img = Image.new('RGB', (200, 100), (255, 255, 255))
 
