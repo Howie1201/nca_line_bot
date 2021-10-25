@@ -70,25 +70,25 @@ def getMenu():
 
 def printMenu(restaurant):
     restaurant_path = 'data/restaurant/' + restaurant + '.csv'
-    if os.path.isfile(restaurant_path)
-        menuFile = open(restaurant_path, newline = '', encoding = 'utf-8')
-        menu = list( csv.reader(menuFile) )        
+    if os.path.isfile(restaurant_path):
+        with  open(restaurant_path, newline = '', encoding = 'utf-8') as menuFile:
+            menu = list( csv.reader(menuFile) )        
         reply = ''
         for food in menu:
             reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
-        menuFile.close()
+        return reply
     else:           
-        line_bot_api.reply_message(event.reply_token, TextSendMessage('查無此餐廳'))    
+        return '查無此餐廳'
 
 def addOrder(userId, orders):
     f = open('data/order.csv', 'a+', encoding = 'utf-8')
     profile = line_bot_api.get_profile(userId)         
     orders = orders.split('/')     
     for order in orders:
-        f.write(profile.display_name + ',' + order + '\n')               
-    line_bot_api.reply_message(event.reply_token, TextSendMessage('收到'))      
-    f.close()
+        f.write(profile.display_name + ',' + order + '\n')     
+    f.close()          
+    return '收到'
+    
 
 def countOrder():
     with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
@@ -101,7 +101,7 @@ def countOrder():
             foods[order[1]] = 1
     return foods
 
-def printStatistic(menu):
+def printStatistic(foods, menu):
     reply = ''
     total = 0
     total_price = 0
@@ -113,16 +113,16 @@ def printStatistic(menu):
             food_price = menu[int(food)][2] if food.isnumeric() else 0
             reply += ( food_name + ' ' + str(foods[food]) + '份\n')
             total += foods[food]
-            total_price += ( int(food_price) * foods[food] )               
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply + '共' + str(total) + '份' + str(total_price) + '元'))
-
+            total_price += ( int(food_price) * foods[food] )    
+        reply += ( '共' + str(total) + '份' + str(total_price) + '元' )
     else:             
         for food in foods:
             reply += ( food + ' ' + str(foods[food]) + '份\n')
-            total += foods[food]             
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply + '共' + str(total) + '份'))
+            total += foods[food] 
+        reply += ( '共' + str(total) + '份' )
+    return reply
     
-def printDetail():
+def printDetail(orders, menu):
     order_no = 1
     reply = ''
     if menu:               
@@ -131,15 +131,12 @@ def printDetail():
             food_name = menu[int(order[1])][1]
             food_price = menu[int(order[1])][2]
             reply += ( str(order_no) + '. ' + order[0] + '/' + food_name + '/' + food_price + '元\n' )
-            order_no += 1
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
-        menuFile.close()
-        
+            order_no += 1      
     else:
         for order in orders:
             reply += ( str(order_no) + '. ' + order[0] + '/' + order[1] + '\n' )
             order_no += 1
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+    return reply
 
 
 description = '指令輸入格式:\n(指令)/(內容1)/(內容2)...\n\n指令:\n說明、吃、點、統計、明細、clear'
@@ -161,9 +158,40 @@ def handle_message(event):
         return
     message = message.split().split('/', 1)
     command = message[0]
-    parameters = message[1]
+    parameters = message[1]  
+    reply = ''
     
+    if command == '說明':
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
+            
+    elif command == '吃':
+        checkAuthority(userId)
+        # set restaurant            
+        # if database has restaurant's menu, print it
+        restaurant = setRestaurant(parameters)
+        reply = printMenu(restaurant)
+        
+                                                        
+    elif command == '點':
+        reply = addOrder(userId, parameters)
+                        
+    elif command == '統計':                        
+        foods = countOrder()
+        menu = getMenu()
+        printStatistic(foods, menu)
+        
+    elif command == '明細':          
+        with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
+            orders = list( csv.reader(orderFile) )           
+        menu = getMenu()
+        printDetail(orders, menu)
+        
+    elif command == 'clear':
+        os.remove('data/order.csv')
     
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+    
+'''
     match command:
         
         case '說明':
@@ -189,8 +217,8 @@ def handle_message(event):
                 orders = list( csv.reader(orderFile) )           
             menu = getMenu()
             printDetail(orders, menu)
-
-            '''
+'''
+'''
             TODO:
             
             # create and send order datail image
@@ -201,11 +229,25 @@ def handle_message(event):
             
             img.save('data/detail.png')
             line_bot_api.reply_message(event.reply_token, ImageSendMessage('data/detail.png', 'data/detail.png'))
-            '''
-
+'''
+'''
         case 'clear':
             os.remove('data/order.csv')
             #os.remove('data/detail.png')
+'''
+
+'''
+        TODO:
+        
+        # create and send order datail image
+        img = Image.new('RGB', (600, 800), color=(255, 255, 255))
+        font = ImageFont.truetype('data/arial.ttf', size = 24)
+        iDraw = ImageDraw.Draw(img)
+        iDraw.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
+        
+        img.save('data/detail.png')
+        line_bot_api.reply_message(event.reply_token, ImageSendMessage('data/detail.png', 'data/detail.png'))
+        '''
 
 
 if __name__ == '__main__':
