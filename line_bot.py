@@ -11,6 +11,7 @@ from __future__ import unicode_literals
 import os
 import json
 import csv
+import re
 
 from flask import Flask, request, abort
 from PIL import Image, ImageDraw, ImageFont
@@ -153,21 +154,21 @@ def handle_message(event):
     userId = event.source.user_id
     message = event.message.text
     
-    # handle command
+    # handle command and string processing
     if '/' not in message:
         return
-    message = message.split().split('/', 1)
+    message = message.replace(' ','').replace('\n','').split('/',1)
     command = message[0]
     parameters = message[1]  
     reply = ''
     
     if command == '說明':
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
+        reply = description
             
     elif command == '吃':
-        checkAuthority(userId)
         # set restaurant            
         # if database has restaurant's menu, print it
+        checkAuthority(userId)     
         restaurant = setRestaurant(parameters)
         reply = printMenu(restaurant)
         
