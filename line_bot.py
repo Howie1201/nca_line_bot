@@ -9,8 +9,9 @@ version: 2.4
 
 from __future__ import unicode_literals
 import os
-#import csv
-import order_lib
+import json
+import csv
+import re
 
 from flask import Flask, request, abort
 from PIL import Image, ImageDraw, ImageFont
@@ -44,6 +45,101 @@ def callback():
     return 'OK'
 
 
+def checkAuthority(userId):
+    return True
+
+
+def setRestaurant(restaurant):
+    with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
+        data = json.load(jsonFile)
+    data['restaurant'] = restaurant
+    with open('data/data.json', 'w', encoding = 'utf-8') as jsonFile: 
+        json.dump(data, jsonFile)
+    return restaurant
+
+def getMenu():
+    with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile:
+        data = json.load(jsonFile)
+    restaurant_path = 'data/restaurant/' + data['restaurant'] + '.csv'
+    if os.path.isfile(restaurant_path):
+        with open(restaurant_path, newline = '', encoding = 'utf-8') as menuFile:
+            menu = list( csv.reader(menuFile) )
+            return menu
+    else:
+        return []
+    
+
+def printMenu(restaurant):
+    restaurant_path = 'data/restaurant/' + restaurant + '.csv'
+    if os.path.isfile(restaurant_path):
+        with  open(restaurant_path, newline = '', encoding = 'utf-8') as menuFile:
+            menu = list( csv.reader(menuFile) )        
+        reply = ''
+        for food in menu:
+            reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )
+        return reply
+    else:           
+        return '查無此餐廳'
+
+def addOrder(userId, orders):
+    f = open('data/order.csv', 'a+', encoding = 'utf-8')
+    profile = line_bot_api.get_profile(userId)         
+    orders = orders.split('/')     
+    for order in orders:
+        f.write(profile.display_name + ',' + order + '\n')     
+    f.close()          
+    return '收到'
+    
+
+def countOrder():
+    with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
+        orders = list(csv.reader(orderFile))
+    foods = {}
+    for order in orders:
+        if order[1] in foods:
+            foods[order[1]] += 1
+        else:
+            foods[order[1]] = 1
+    return foods
+
+def printStatistic(foods, menu):
+    reply = ''
+    total = 0
+    total_price = 0
+    # if database has restaurant's menu 
+    if menu:
+        # print items, numbers, total numbers, total price, etc.               
+        for food in foods:
+            food_name = menu[int(food)][1] if food.isnumeric() else food
+            food_price = menu[int(food)][2] if food.isnumeric() else 0
+            reply += ( food_name + ' ' + str(foods[food]) + '份\n')
+            total += foods[food]
+            total_price += ( int(food_price) * foods[food] )    
+        reply += ( '共' + str(total) + '份' + str(total_price) + '元' )
+    else:             
+        for food in foods:
+            reply += ( food + ' ' + str(foods[food]) + '份\n')
+            total += foods[food] 
+        reply += ( '共' + str(total) + '份' )
+    return reply
+    
+def printDetail(orders, menu):
+    order_no = 1
+    reply = ''
+    if menu:               
+        # print order detail
+        for order in orders:
+            food_name = menu[int(order[1])][1]
+            food_price = menu[int(order[1])][2]
+            reply += ( str(order_no) + '. ' + order[0] + '/' + food_name + '/' + food_price + '元\n' )
+            order_no += 1      
+    else:
+        for order in orders:
+            reply += ( str(order_no) + '. ' + order[0] + '/' + order[1] + '\n' )
+            order_no += 1
+    return reply
+
+
 description = '指令輸入格式:\n(指令)/(內容1)/(內容2)...\n\n指令:\n說明、吃、點、統計、明細、clear'
 
 # decorator 判斷 event 為 MessageEvent
@@ -70,29 +166,26 @@ def handle_message(event):
         reply = description
             
     elif command == '吃':
-        order_lib.checkAuthority(userId)    
-        restaurant = parameters
-        order_lib.setRestaurant(restaurant)
-        reply = order_lib.printMenu(restaurant)
-               
+        # set restaurant            
+        # if database has restaurant's menu, print it
+        checkAuthority(userId)     
+        restaurant = setRestaurant(parameters)
+        reply = printMenu(restaurant)
+        
                                                         
     elif command == '點':
-        user_name = line_bot_api.get_profile(userId).display_name
-        reply = order_lib.addOrder(user_name, parameters)
-                      
-    elif command == '取消':
-        print('cancel')
+        reply = addOrder(userId, parameters)
+                        
+    elif command == '統計':                        
+        foods = countOrder()
+        menu = getMenu()
+        reply = printStatistic(foods, menu)
         
-    elif command == '統計':        
-        orders = order_lib.getOrder()  
-        menu = order_lib.getMenu()        
-        foods = order_lib.countOrder(orders)      
-        reply = order_lib.printStatistic(foods, menu)
-        
-    elif command == '明細':  
-        orders = order_lib.getOrder()              
-        menu = order_lib.getMenu()
-        reply = order_lib.printDetail(orders, menu)
+    elif command == '明細':          
+        with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
+            orders = list( csv.reader(orderFile) )           
+        menu = getMenu()
+        reply = printDetail(orders, menu)
         
     elif command == 'clear':
         os.remove('data/order.csv')
@@ -100,8 +193,52 @@ def handle_message(event):
     
     line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
     
+'''
+    match command:
+        
+        case '說明':
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
+            
+        case '吃':
+            checkAuthority(userId)
+            # set restaurant            
+            # if database has restaurant's menu, print it
+            restaurant = setRestaurant(parameters)
+            printMenu(restaurant)
+                                                        
+        case '點':
+            addOrder(userId, parameters)
+                            
+        case '統計':                        
+            foods = countOrder()
+            menu = getMenu()
+            printStatistic(menu)           
+            
+        case '明細':          
+            with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
+                orders = list( csv.reader(orderFile) )           
+            menu = getMenu()
+            printDetail(orders, menu)
+'''
+'''
+            TODO:
+            
+            # create and send order datail image
+            img = Image.new('RGB', (600, 800), color=(255, 255, 255))
+            font = ImageFont.truetype('data/arial.ttf', size = 24)
+            iDraw = ImageDraw.Draw(img)
+            iDraw.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
+            
+            img.save('data/detail.png')
+            line_bot_api.reply_message(event.reply_token, ImageSendMessage('data/detail.png', 'data/detail.png'))
+'''
+'''
+        case 'clear':
+            os.remove('data/order.csv')
+            #os.remove('data/detail.png')
+'''
 
-        '''
+'''
         TODO:
         
         # create and send order datail image
