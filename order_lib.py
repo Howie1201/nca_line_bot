@@ -12,12 +12,12 @@ import os
 
 
 def getData():
-    with open('data/data.json', 'r', encoding = 'utf-8', errors = 'ignore') as jsonFile: 
+    with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
         data = json.load(jsonFile)
     return data 
 
 def setData(data):
-    with open('data/data.json', 'w', encoding = 'utf-8', errors = 'ignore') as jsonFile: 
+    with open('data/data.json', 'w', encoding = 'utf-8') as jsonFile: 
         json.dump(data, jsonFile)
 
 def checkAuthority(userId):
@@ -43,7 +43,7 @@ def setRestaurant(restaurant):
 
 def getMenu(restaurant):
     if hasRestaurant(restaurant):
-        with open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8', errors = 'ignore') as menuFile:
+        with open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
             menu = list(csv.reader(menuFile))
             return menu
     else:
@@ -52,7 +52,7 @@ def getMenu(restaurant):
 
 def printMenu(restaurant):
     if hasRestaurant(restaurant):
-        with open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8', errors = 'ignore') as menuFile:
+        with open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
             menu = list(csv.reader(menuFile)) # bug  
         reply = ''
         for food in menu:
@@ -70,7 +70,7 @@ def addOrder(user_name, orders):
     return '收到'
     
 def getOrder():
-    with open('data/order.csv', newline = '', encoding = 'utf-8', errors = 'ignore') as orderFile:
+    with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
         orders = list(csv.reader(orderFile))
     return orders
 
