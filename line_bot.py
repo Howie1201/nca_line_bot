@@ -70,12 +70,11 @@ def handle_message(event):
         reply = description
             
     elif command == '吃':
-        # set restaurant            
-        # if database has restaurant's menu, print it
-        order_lib.checkAuthority(userId)     
-        restaurant = order_lib.setRestaurant(parameters)
+        order_lib.checkAuthority(userId)    
+        restaurant = parameters
+        order_lib.setRestaurant(restaurant)
         reply = order_lib.printMenu(restaurant)
-        
+               
                                                         
     elif command == '點':
         user_name = line_bot_api.get_profile(userId).display_name
@@ -85,9 +84,9 @@ def handle_message(event):
         print('cancel')
         
     elif command == '統計':        
-        orders = order_lib.getOrder()       
-        foods = order_lib.countOrder(orders)
-        menu = order_lib.getMenu()
+        orders = order_lib.getOrder()  
+        menu = order_lib.getMenu()        
+        foods = order_lib.countOrder(orders)      
         reply = order_lib.printStatistic(foods, menu)
         
     elif command == '明細':  
@@ -101,52 +100,8 @@ def handle_message(event):
     
     line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
     
-'''
-    match command:
-        
-        case '說明':
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(description))
-            
-        case '吃':
-            checkAuthority(userId)
-            # set restaurant            
-            # if database has restaurant's menu, print it
-            restaurant = setRestaurant(parameters)
-            printMenu(restaurant)
-                                                        
-        case '點':
-            addOrder(userId, parameters)
-                            
-        case '統計':                        
-            foods = countOrder()
-            menu = getMenu()
-            printStatistic(menu)           
-            
-        case '明細':          
-            with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
-                orders = list( csv.reader(orderFile) )           
-            menu = getMenu()
-            printDetail(orders, menu)
-'''
-'''
-            TODO:
-            
-            # create and send order datail image
-            img = Image.new('RGB', (600, 800), color=(255, 255, 255))
-            font = ImageFont.truetype('data/arial.ttf', size = 24)
-            iDraw = ImageDraw.Draw(img)
-            iDraw.text((40, 40), 'Hello', fill=(0, 0, 0), font = font)
-            
-            img.save('data/detail.png')
-            line_bot_api.reply_message(event.reply_token, ImageSendMessage('data/detail.png', 'data/detail.png'))
-'''
-'''
-        case 'clear':
-            os.remove('data/order.csv')
-            #os.remove('data/detail.png')
-'''
 
-'''
+        '''
         TODO:
         
         # create and send order datail image

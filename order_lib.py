@@ -4,35 +4,48 @@ import re
 import os
 
 
-def checkAuthority(userId):
-    return True
-
-
-def setRestaurant(restaurant):
+def getData():
     with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
         data = json.load(jsonFile)
-    data['restaurant'] = restaurant
+    return data 
+
+def setData(data):
     with open('data/data.json', 'w', encoding = 'utf-8') as jsonFile: 
         json.dump(data, jsonFile)
-    return restaurant
 
-def getMenu():
-    with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile:
-        data = json.load(jsonFile)
+def checkAuthority(userId):
+    data = getData()
+    return True
+
+def hasRestaurant():
     restaurant_path = 'data/restaurant/' + data['restaurant'] + '.csv'
     if os.path.isfile(restaurant_path):
+        return True
+    else:
+        return False
+
+def getRestaurant():
+    data = getData()
+    return data['restaurant']
+
+def setRestaurant(restaurant):
+    data = getData()
+    data['restaurant'] = restaurant
+    setData(data)
+
+def getMenu(restaurant):
+    if hasRestaurant(restaurant):
         with open(restaurant_path, newline = '', encoding = 'utf-8') as menuFile:
-            menu = list( csv.reader(menuFile) )
+            menu = list(csv.reader(menuFile))
             return menu
     else:
         return []
     
 
 def printMenu(restaurant):
-    restaurant_path = 'data/restaurant/' + restaurant + '.csv'
-    if os.path.isfile(restaurant_path):
+    if hasRestaurant(restaurant):
         with  open(restaurant_path, newline = '', encoding = 'utf-8') as menuFile:
-            menu = list( csv.reader(menuFile) )        
+            menu = list(csv.reader(menuFile))        
         reply = ''
         for food in menu:
             reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )

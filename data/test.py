@@ -6,6 +6,17 @@ import io
 import os
 import re
 
-message = 'a/ bbc/ \n de'
-message = message.replace(' ','').replace('\n','').split('/',1)
-print (message)
+text = 'abc'
+
+'''
+match (text):
+    case "a":
+        print('a')
+        break
+    case "ab":
+        print('ab')
+        break
+    case "abc":
+        print('abc')
+        break
+'''
