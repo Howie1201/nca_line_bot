@@ -53,7 +53,7 @@ def getMenu(restaurant):
 def printMenu(restaurant):
     if hasRestaurant(restaurant):
         with  open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
-            menu = list(csv.reader(menuFile))        
+            menu = list(csv.reader(menuFile))      # bug  
         reply = ''
         for food in menu:
             reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )
