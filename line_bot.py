@@ -72,8 +72,7 @@ def handle_message(event):
             return 
         restaurant = parameters
         order_lib.setRestaurant(restaurant)
-        reply = order_lib.printMenu(restaurant)
-               
+        reply = order_lib.printMenu(restaurant)               
                                                         
     elif command == '點':
         user_name = line_bot_api.get_profile(userId).display_name
@@ -86,13 +85,15 @@ def handle_message(event):
         
     elif command == '統計':        
         orders = order_lib.getOrder()  
-        menu = order_lib.getMenu()        
+        restaurant = order_lib.getRestaurant()
+        menu = order_lib.getMenu(restaurant)        
         foods = order_lib.countOrder(orders)      
         reply = order_lib.printStatistic(foods, menu)
         
     elif command == '明細':  
-        orders = order_lib.getOrder()              
-        menu = order_lib.getMenu()
+        orders = order_lib.getOrder()     
+        restaurant = order_lib.getRestaurant()         
+        menu = order_lib.getMenu(restaurant)
         reply = order_lib.printDetail(orders, menu)
         
     elif command == 'clear': 
