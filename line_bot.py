@@ -100,7 +100,7 @@ def handle_message(event):
     
     line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
     
-        '''
+'''
         TODO:
         
         # create and send order datail image
@@ -111,7 +111,7 @@ def handle_message(event):
         
         img.save('data/detail.png')
         line_bot_api.reply_message(event.reply_token, ImageSendMessage('data/detail.png', 'data/detail.png'))
-        '''
+'''
 
 
 if __name__ == '__main__':
