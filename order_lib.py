@@ -15,10 +15,11 @@ def setData(data):
 
 def checkAuthority(userId):
     data = getData()
+    # TODO
     return True
 
-def hasRestaurant():
-    restaurant_path = 'data/restaurant/' + data['restaurant'] + '.csv'
+def hasRestaurant(restaurant):
+    restaurant_path = 'data/restaurant/' + restaurant + '.csv'
     if os.path.isfile(restaurant_path):
         return True
     else:
@@ -57,7 +58,7 @@ def addOrder(user_name, orders):
     f = open('data/order.csv', 'a+', encoding = 'utf-8')         
     orders = orders.split('/')     
     for order in orders:
-        f.write(user_name + ',' + order + '\n')     
+        f.write(user_name + ',' + order + '\n')
     f.close()          
     return '收到'
     
