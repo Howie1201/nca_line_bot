@@ -4,12 +4,11 @@ Created on Thu Jul 23 15:50:24 2020
 
 @author: jacky
 
-version: 2.4
+version: 2.5
 """
 
 from __future__ import unicode_literals
 import os
-#import csv
 import order_lib
 
 from flask import Flask, request, abort
@@ -20,7 +19,6 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 
 app = Flask(__name__)
-
 line_bot_api = LineBotApi('KbUSP5ShwG5gziWRdy3niYUieAZaYlDc2YMW1HB3Ao05YRm+DKUar29lK0lfqjeMqzLRm1MLALf/R4jIV/k+98YxIR40SryCI8qsokVBe31heMMafyPQSI89odk42Ts1dD9b35gyPMCkOhHEGp+M/wdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('b33a01e1e548c7b39a732d62245e1d36')
 
@@ -40,7 +38,6 @@ def callback():
     except InvalidSignatureError:
         print("Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
-
     return 'OK'
 
 
@@ -70,7 +67,9 @@ def handle_message(event):
         reply = description
             
     elif command == '吃':
-        order_lib.checkAuthority(userId)    
+        admin = order_lib.checkAuthority(userId)
+        if not admin:
+            return 
         restaurant = parameters
         order_lib.setRestaurant(restaurant)
         reply = order_lib.printMenu(restaurant)
@@ -81,7 +80,9 @@ def handle_message(event):
         reply = order_lib.addOrder(user_name, parameters)
                       
     elif command == '取消':
-        print('cancel')
+        user_name = line_bot_api.get_profile(userId).display_name
+        order_lib.cancelOrder(user_name, parameters)
+        #print('cancel')
         
     elif command == '統計':        
         orders = order_lib.getOrder()  
@@ -94,9 +95,8 @@ def handle_message(event):
         menu = order_lib.getMenu()
         reply = order_lib.printDetail(orders, menu)
         
-    elif command == 'clear':
-        os.remove('data/order.csv')
-        reply = '清除資料'
+    elif command == 'clear': 
+        reply = order_lib.clear()
     
     line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
     

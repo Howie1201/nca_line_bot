@@ -22,8 +22,11 @@ def setData(data):
 
 def checkAuthority(userId):
     data = getData()
-    # TODO
-    return True
+    admins = data['admin']
+    if userId in admins.values():
+        return True
+    else:
+        return False
 
 def hasRestaurant(restaurant):
     restaurant_path = 'data/restaurant/' + restaurant + '.csv'
@@ -49,17 +52,15 @@ def getMenu(restaurant):
     else:
         return []
     
-
 def printMenu(restaurant):
-    if hasRestaurant(restaurant):
-        with open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
-            menu = list(csv.reader(menuFile)) # bug  
-        reply = ''
+    reply = ''
+    menu = getMenu()
+    if menu:
         for food in menu:
-            reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )
-        return reply
+            reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )  
     else:           
-        return '查無此餐廳'
+        reply = '查無此餐廳'
+    return reply
 
 def addOrder(user_name, orders):
     f = open('data/order.csv', 'a+', encoding = 'utf-8')         
@@ -68,6 +69,21 @@ def addOrder(user_name, orders):
         f.write(user_name + ',' + order + '\n')
     f.close()          
     return '收到'
+
+def cancelOrder(user_name, cancel_orders):
+    orders = getOrder()
+    clear()
+    if cancel_orders:
+        cancel_orders = cancel_orders.split('/')
+        for cancel_order in cancel_orders:
+            for order in orders:
+                if order[0] != user_name or order[1] != cancel_order:
+                    addOrder(order[0], order[1])
+    else:
+        for order in orders:
+            if order[0] != user_name:
+                addOrder(order[0], order[1])
+    return '取消訂單'
     
 def getOrder():
     with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
@@ -119,3 +135,15 @@ def printDetail(orders, menu):
             reply += ( str(order_no) + '. ' + order[0] + '/' + order[1] + '\n' )
             order_no += 1
     return reply
+
+def clear():
+    os.remove('data/order.csv')
+    reply = '清除資料'
+    return reply
+    
+    
+    
+    
+    
+    
+    

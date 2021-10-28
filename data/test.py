@@ -6,7 +6,7 @@ import io
 import os
 import re
 
-text = 'abc'
+text = 'aaaa/'
 
 '''
 match (text):
@@ -20,3 +20,10 @@ match (text):
         print('abc')
         break
 '''
+
+text2 = text.split('/')
+print(text2)
+if(text2[1]):
+    print('hi')
+else:
+    print('no')
