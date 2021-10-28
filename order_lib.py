@@ -36,7 +36,7 @@ def setRestaurant(restaurant):
 
 def getMenu(restaurant):
     if hasRestaurant(restaurant):
-        with open(restaurant_path, newline = '', encoding = 'utf-8') as menuFile:
+        with open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
             menu = list(csv.reader(menuFile))
             return menu
     else:
@@ -45,7 +45,7 @@ def getMenu(restaurant):
 
 def printMenu(restaurant):
     if hasRestaurant(restaurant):
-        with  open(restaurant_path, newline = '', encoding = 'utf-8') as menuFile:
+        with  open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
             menu = list(csv.reader(menuFile))        
         reply = ''
         for food in menu:
