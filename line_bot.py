@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 import os
 import order_lib
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, render_template
 from PIL import Image, ImageDraw, ImageFont
 
 from linebot import LineBotApi, WebhookHandler
@@ -40,6 +40,10 @@ def callback():
         abort(400)
     return 'OK'
 
+@app.route("/detail")
+def showDetail():
+    return render_template('datail.html')
+    
 
 description = '指令輸入格式:\n(指令)/(內容1)/(內容2)...\n\n指令:\n說明、吃、點、統計、明細、clear'
 
@@ -95,6 +99,7 @@ def handle_message(event):
         restaurant = order_lib.getRestaurant()         
         menu = order_lib.getMenu(restaurant)
         reply = order_lib.printDetail(orders, menu)
+        printDetailAsHtml()
         
     elif command == 'clear': 
         reply = order_lib.clear()

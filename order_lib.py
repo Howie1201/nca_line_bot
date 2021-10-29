@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul 23 15:50:24 2020
+Created on Thu Oct 28 15:50:24 2021
 
 @author: jacky
 """
@@ -135,6 +135,8 @@ def printDetail(orders, menu):
             reply += ( str(order_no) + '. ' + order[0] + '/' + order[1] + '\n' )
             order_no += 1
     return reply
+    
+
 
 def clear():
     os.remove('data/order.csv')
