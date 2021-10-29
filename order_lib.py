@@ -54,7 +54,7 @@ def getMenu(restaurant):
     
 def printMenu(restaurant):
     reply = ''
-    menu = getMenu()
+    menu = getMenu(restaurant)
     if menu:
         for food in menu:
             reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )  
