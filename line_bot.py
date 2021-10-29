@@ -42,6 +42,7 @@ def callback():
 
 @app.route("/detail")
 def showDetail():
+    print('show datail')
     return render_template('datail.html')
     
 

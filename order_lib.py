@@ -137,7 +137,6 @@ def printDetail(orders, menu):
     return reply
     
 
-
 def clear():
     os.remove('data/order.csv')
     reply = '清除資料'
