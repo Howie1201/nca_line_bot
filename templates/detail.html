@@ -9,5 +9,8 @@
 	<body>
 		<h1>明細</h1>
 		<embed id="detail" src="{{url_for('static', filename='detail.txt')}}" width="400" height="600">
+		<script language="javascript" type="text/javascript">
+			getElementById('detail').contentDocument.location.reload()
+		</script>
 	</body>
 </html>
