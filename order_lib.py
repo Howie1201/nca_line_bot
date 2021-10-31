@@ -10,7 +10,7 @@ import csv
 import os
 
 order_path = 'data/order.csv'
-detail_path = 'data/detail.txt'
+detail_path = 'static/detail.txt'
 detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
 
 
