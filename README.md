@@ -36,9 +36,9 @@
 
 ## 使用範例
 
-![](https://imgur.com/e0TbX29)
+![](https://i.imgur.com/e0TbX29.jpg)
 
-![](https://imgur.com/lMqG3IZ)
+![](https://i.imgur.com/lMqG3IZ.jpg)
 
 ## 注意事項
 
