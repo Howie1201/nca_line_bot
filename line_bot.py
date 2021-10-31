@@ -8,15 +8,14 @@ version: 2.5
 """
 
 from __future__ import unicode_literals
-import os
 import order_lib
 
 from flask import Flask, request, abort, render_template
-from PIL import Image, ImageDraw, ImageFont
+#from PIL import Image, ImageDraw, ImageFont
 
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 app = Flask(__name__)
 line_bot_api = LineBotApi('KbUSP5ShwG5gziWRdy3niYUieAZaYlDc2YMW1HB3Ao05YRm+DKUar29lK0lfqjeMqzLRm1MLALf/R4jIV/k+98YxIR40SryCI8qsokVBe31heMMafyPQSI89odk42Ts1dD9b35gyPMCkOhHEGp+M/wdB04t89/1O/w1cDnyilFU=')
@@ -42,8 +41,8 @@ def callback():
 
 @app.route("/detail")
 def showDetail():
-    print('show datail')
-    return render_template('datail.html')
+    print('show detail')
+    return render_template('detail.html')
     
 
 description = '指令輸入格式:\n(指令)/(內容1)/(內容2)...\n\n指令:\n說明、吃、點、統計、明細、clear'
@@ -53,6 +52,7 @@ description = '指令輸入格式:\n(指令)/(內容1)/(內容2)...\n\n指令:\n
 # 所以此為處理 TextMessage 的 handler
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    
     # TODO: optimization
     print(event)
     
@@ -71,15 +71,22 @@ def handle_message(event):
     if command == '說明':
         reply = description
             
-    elif command == '吃':
+    if command == '吃':
         admin = order_lib.checkAuthority(userId)
         if not admin:
-            return 
+            return         
         restaurant = parameters
-        order_lib.setRestaurant(restaurant)
-        reply = order_lib.printMenu(restaurant)               
-                                                        
-    elif command == '點':
+        if order_lib.hasMenu(restaurant):
+            order_lib.setRestaurant(restaurant)
+            reply = order_lib.printMenu(restaurant)
+        else:
+            reply = '查無此餐廳'
+                              
+    if not order_lib.hasRestaurant():
+        return 
+    
+    #TODO: refactor                       
+    if command == '點':
         user_name = line_bot_api.get_profile(userId).display_name
         reply = order_lib.addOrder(user_name, parameters)
                       
@@ -94,22 +101,32 @@ def handle_message(event):
         menu = order_lib.getMenu(restaurant)        
         foods = order_lib.countOrder(orders)      
         reply = order_lib.printStatistic(foods, menu)
+        reply += ('\n' + order_lib.showDetailAsHtml(orders, menu))
         
-    elif command == '明細':  
+    elif command == '截止': 
+        admin = order_lib.checkAuthority(userId)
+        if not admin:
+            return
+        order_lib.setRestaurant('')
+        ''' 
         orders = order_lib.getOrder()     
         restaurant = order_lib.getRestaurant()         
         menu = order_lib.getMenu(restaurant)
         reply = order_lib.printDetail(orders, menu)
-        printDetailAsHtml()
+        #printDetailAsHtml()
+        '''
         
     elif command == 'clear': 
-        reply = order_lib.clear()
+        admin = order_lib.checkAuthority(userId)
+        if not admin:
+            return    
+        order_lib.clear()
+        reply = '清除資料'
     
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
+    if reply:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
     
 '''
-        TODO:
-        
         # create and send order datail image
         img = Image.new('RGB', (600, 800), color=(255, 255, 255))
         font = ImageFont.truetype('data/arial.ttf', size = 24)
