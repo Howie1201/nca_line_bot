@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 		<title>食啥明細表</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
@@ -11,8 +12,5 @@
 		<div id="detail">
 			<embed src="{{url_for('static', filename='detail.txt')}}" width="400" height="600">
 		</div>
-		<script language="javascript" type="text/javascript">
-			document.getElementById('detail').innerHTML = '<embed id="detail" src="{{url_for('static', filename='detail.txt')}}" width="400" height="600">';
-		</script>
 	</body>
 </html>
