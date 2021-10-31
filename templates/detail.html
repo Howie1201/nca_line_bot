@@ -8,8 +8,11 @@
 	</head>
 	<body>
 		<h1>明細</h1>	
+		<div id="detail">
+			<embed src="{{url_for('static', filename='detail.txt')}}" width="400" height="600">
+		</div>
 		<script language="javascript" type="text/javascript">
-			document.getElementById('videoBox').innerHTML = '<embed id="detail" src="{{url_for('static', filename='detail.txt')}}" width="400" height="600">';
+			document.getElementById('detail').innerHTML = '<embed id="detail" src="{{url_for('static', filename='detail.txt')}}" width="400" height="600">';
 		</script>
 	</body>
 </html>
