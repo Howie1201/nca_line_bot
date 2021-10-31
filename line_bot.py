@@ -21,6 +21,8 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 app = Flask(__name__)
 line_bot_api = LineBotApi('KbUSP5ShwG5gziWRdy3niYUieAZaYlDc2YMW1HB3Ao05YRm+DKUar29lK0lfqjeMqzLRm1MLALf/R4jIV/k+98YxIR40SryCI8qsokVBe31heMMafyPQSI89odk42Ts1dD9b35gyPMCkOhHEGp+M/wdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('b33a01e1e548c7b39a732d62245e1d36')
+app_name = 'eatwhat-in-ncu'
+domain_name = 'https://' + app_name + '.herokuapp.com/'
 
 
 @app.route("/")
@@ -81,6 +83,12 @@ def handle_message(event):
     if command == '說明':
         reply = description
             
+    if command == '餐廳':
+        for dirPath, dirNames, fileNames in os.walk(/data/restaurant/):
+            for fileName in fileNames:
+                restaurant = fileName.split('.')[0]
+                reply += ( restaurant + '\n' )
+    
     if command == '吃':
         admin = order_lib.checkAuthority(userId)
         if not admin:
@@ -97,41 +105,38 @@ def handle_message(event):
         if not admin:
             return    
         order_lib.clear()
-        reply = '清除資料'  
+        reply = '清除資料'
+            
+    if order_lib.hasRestaurant(): 
+                       
+        if command == '點':            
+            user_name = line_bot_api.get_profile(userId).display_name
+            reply = order_lib.addOrder(user_name, parameters)
+                          
+        elif command == '取消':
+            user_name = line_bot_api.get_profile(userId).display_name
+            reply = order_lib.cancelOrder(user_name, parameters)
+            
+        elif command == '統計':      
+            orders = order_lib.getOrder()  
+            restaurant = order_lib.getRestaurant()
+            menu = order_lib.getMenu(restaurant)        
+            foods = order_lib.countOrder(orders)      
+            reply = order_lib.printStatistic(foods, menu)
+            reply += ('\n' + order_lib.showDetailAsHtml(orders, menu, domain_name))
+            
+        elif command == '明細':
+            orders = order_lib.getOrder()  
+            restaurant = order_lib.getRestaurant()
+            menu = order_lib.getMenu(restaurant)  
+            reply = order_lib.printDetail(orders, menu)
+            
+        elif command == '截止': 
+            admin = order_lib.checkAuthority(userId)
+            if not admin:
+                return
+            order_lib.setRestaurant('')   
         
-    if not order_lib.hasRestaurant():
-        return 
-                      
-    if command == '點':
-        user_name = line_bot_api.get_profile(userId).display_name
-        reply = order_lib.addOrder(user_name, parameters)
-                      
-    elif command == '取消':
-        user_name = line_bot_api.get_profile(userId).display_name
-        reply = order_lib.cancelOrder(user_name, parameters)
-        
-    elif command == '統計':        
-        orders = order_lib.getOrder()  
-        restaurant = order_lib.getRestaurant()
-        menu = order_lib.getMenu(restaurant)        
-        foods = order_lib.countOrder(orders)      
-        reply = order_lib.printStatistic(foods, menu)
-        reply += ('\n' + order_lib.showDetailAsHtml(orders, menu))
-        
-    elif command == '明細':
-        orders = order_lib.getOrder()  
-        restaurant = order_lib.getRestaurant()
-        menu = order_lib.getMenu(restaurant)  
-        reply = order_lib.printDetail(orders, menu)
-        
-    elif command == '截止': 
-        admin = order_lib.checkAuthority(userId)
-        if not admin:
-            return
-        order_lib.setRestaurant('')
-        
-    
-    
     if reply:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
 

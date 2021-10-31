@@ -11,58 +11,55 @@ import os
 
 order_path = 'data/order.csv'
 detail_path = 'static/detail.txt'
-detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
+#detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
 
+# TODO: add comment, optimize
 
+# return data in data.json
 def getData():
     with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
         data = json.load(jsonFile)
     return data 
 
+# edit data in data.json
 def setData(data):
     with open('data/data.json', 'w', encoding = 'utf-8') as jsonFile: 
         json.dump(data, jsonFile)
 
+# check if the user is admin
 def checkAuthority(userId):
     data = getData()
     admins = data['admin']
     return True if userId in admins.values() else False
-'''
-    if userId in admins.values():
-        return True
-    else:
-        return False
-'''
 
+# check if the value of data['restaurant'] is not empty   
 def hasRestaurant():
     data = getData()
     return True if data['restaurant'] else False
-    
-'''    
-    if os.path.isfile(restaurant_path):
-        return True
-    else:
-        return False
-'''
 
+# return today's restaurant
 def getRestaurant():
     data = getData()
     return data['restaurant']
 
+# set today's restaurant
 def setRestaurant(restaurant):
     data = getData()
     data['restaurant'] = restaurant
     setData(data)
 
+# check if a restaurant's menu is in database 
 def hasMenu(restaurant):
     restaurant_path = 'data/restaurant/' + restaurant + '.csv'
     return True if os.path.isfile(restaurant_path) else False
 
+# get a restaurant's menu
 def getMenu(restaurant):
     with open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
         menu = list(csv.reader(menuFile))
         return menu
     
+# print a restaurant's menu
 def printMenu(restaurant):
     reply = ''
     menu = getMenu(restaurant)
@@ -70,6 +67,7 @@ def printMenu(restaurant):
         reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )  
     return reply
 
+# check if user's input is valid
 def checkValidity(order):
     menu = getMenu(getRestaurant())
     if order.isnumeric():
@@ -77,6 +75,7 @@ def checkValidity(order):
             return True
     return False
     
+# add order(s) into order.csv
 def addOrder(user_name, orders):
     orders = orders.split('/') 
     with open('data/order.csv', 'a+', encoding = 'utf-8') as orderFile:        
@@ -87,6 +86,7 @@ def addOrder(user_name, orders):
                 return '請依照格式輸入'
     return '收到'
 
+# cancel and remove order(s) from order.csv
 def cancelOrder(user_name, cancel_orders):
     orders = getOrder()
     os.remove('data/order.csv')
@@ -102,11 +102,13 @@ def cancelOrder(user_name, cancel_orders):
                 addOrder(order[0], order[1])
     return '取消訂單'
     
+# return orders
 def getOrder():
     with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
         orders = list(csv.reader(orderFile))
     return orders
 
+# count number of each items via dict
 def countOrder(orders):
     foods = {}
     for order in orders:
@@ -116,6 +118,7 @@ def countOrder(orders):
             foods[order[1]] = 1
     return foods
 
+# print each items' number, total number, and price
 def printStatistic(foods, menu):
     reply = ''
     total = 0
@@ -129,7 +132,8 @@ def printStatistic(foods, menu):
     reply += ( '共' + str(total) + '份' + str(total_price) + '元' )
     return reply
     
-def showDetailAsHtml(orders, menu):
+# write orders into detail.txt which is loaded by detail.html and show to the users
+def showDetailAsHtml(orders, menu, domain_name):
     if os.path.isfile(detail_path):
         os.remove(detail_path)
     order_no = 1          
@@ -139,9 +143,9 @@ def showDetailAsHtml(orders, menu):
         with open(detail_path, 'a+', encoding = 'utf-8') as detailFile:    
             detailFile.write( str(order_no) + '. ' + order[0] + ' / ' + food_name + ' / ' + food_price + '元\n' )
         order_no += 1
-    return detail_url
+    return domain_name + 'detail'
 
-
+# print orders via line bot
 def printDetail(orders, menu):
     order_no = 1
     reply = ''            
@@ -152,7 +156,7 @@ def printDetail(orders, menu):
         order_no += 1
     return reply
 
-
+# remove unnecessary files 
 def clear():
     os.remove(order_path)
     os.remove(detail_path)
