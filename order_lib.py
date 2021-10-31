@@ -139,7 +139,7 @@ def showDetailAsHtml(orders, menu):
         order_no += 1
     return detail_url
 
-'''
+
 def printDetail(orders, menu):
     order_no = 1
     reply = ''            
@@ -149,7 +149,6 @@ def printDetail(orders, menu):
         reply += ( str(order_no) + '. ' + order[0] + '/' + food_name + '/' + food_price + '元\n' )
         order_no += 1
     return reply
-'''
 
 
 def clear():
