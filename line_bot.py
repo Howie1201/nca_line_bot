@@ -91,7 +91,14 @@ def handle_message(event):
             reply = order_lib.printMenu(restaurant)
         else:
             reply = '查無此餐廳'
-                              
+            
+    if command == 'clear': 
+        admin = order_lib.checkAuthority(userId)
+        if not admin:
+            return    
+        order_lib.clear()
+        reply = '清除資料'  
+        
     if not order_lib.hasRestaurant():
         return 
                       
@@ -123,12 +130,7 @@ def handle_message(event):
             return
         order_lib.setRestaurant('')
         
-    elif command == 'clear': 
-        admin = order_lib.checkAuthority(userId)
-        if not admin:
-            return    
-        order_lib.clear()
-        reply = '清除資料'
+    
     
     if reply:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
