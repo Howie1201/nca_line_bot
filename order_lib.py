@@ -130,6 +130,8 @@ def printStatistic(foods, menu):
     return reply
     
 def showDetailAsHtml(orders, menu):
+    if os.path.isfile(detail_path):
+        os.remove(detail_path)
     order_no = 1          
     for order in orders:
         food_name = menu[int(order[1])][1]
