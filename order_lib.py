@@ -83,9 +83,9 @@ def addOrder(user_name, orders):
         for order in orders:
             if checkValidity(order):
                 orderFile.write(user_name + ',' + order + '\n')          
-                return '收到'
             else:
                 return '請依照格式輸入'
+    return '收到'
 
 def cancelOrder(user_name, cancel_orders):
     orders = getOrder()
