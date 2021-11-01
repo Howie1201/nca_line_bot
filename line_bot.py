@@ -66,7 +66,7 @@ description = '指令輸入格式:\n\
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
-    print(event.decode('utf-8'))
+    print(str(event).decode('utf-8'))
     
     # get user id and message
     userId = event.source.user_id
