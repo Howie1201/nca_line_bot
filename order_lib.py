@@ -24,7 +24,7 @@ def isCommand(message, groupId):
         return False
     else:
         data = getData()
-        if groupId not in data['group']:
+        if groupId not in data['groupId']:
             return False
     return True
 
