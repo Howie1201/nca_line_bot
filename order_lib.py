@@ -9,12 +9,24 @@ import json
 import csv
 import os
 
-restaurant_path = '/data/restaurant/'
+restaurant_path = 'data/restaurant/'
 order_path = 'data/order.csv'
 detail_path = 'static/detail.txt'
 #detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
 
 # TODO: add comment, optimize
+
+# check if the input message should be handled
+def isCommand(message, groupId):
+    if not '/' in message:
+        return False 
+    if not groupId:
+        return False
+    else:
+        data = getData()
+        if groupId not in data['group']:
+            return False
+    return True
 
 # return data in data.json
 def getData():

@@ -66,15 +66,19 @@ description = '指令輸入格式:\n\
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
-    print(event)
+    print(event.decode('utf-8'))
     
     # get user id and message
     userId = event.source.user_id
+    groupId = ''
+    message_type = event.source.type
+    if message_type == 'group':
+        groupId = event.source.group_id
     message = event.message.text
     
-    # handle command and string processing
-    if '/' not in message:
-        return
+    # handle command and string processing    
+    if not order_lib.isCommand(message, groupId):
+        return 
     message = message.replace(' ','').replace('\n','').split('/',1)
     command = message[0]
     parameters = message[1]  
