@@ -84,10 +84,7 @@ def handle_message(event):
         reply = description
             
     if command == '餐廳':
-        for dirPath, dirNames, fileNames in os.walk(/data/restaurant/):
-            for fileName in fileNames:
-                restaurant = fileName.split('.')[0]
-                reply += ( restaurant + '\n' )
+        reply  = listRestaurant()
     
     if command == '吃':
         admin = order_lib.checkAuthority(userId)

@@ -9,6 +9,7 @@ import json
 import csv
 import os
 
+restaurant_path = '/data/restaurant/'
 order_path = 'data/order.csv'
 detail_path = 'static/detail.txt'
 #detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
@@ -31,6 +32,15 @@ def checkAuthority(userId):
     data = getData()
     admins = data['admin']
     return True if userId in admins.values() else False
+
+# list the restaurants in restaurant folder
+def listRestaurant():
+    reply = ''
+    for dirPath, dirNames, fileNames in os.walk(restaurant_path):
+        for fileName in fileNames:
+            restaurant = fileName.split('.')[0]
+            reply += ( restaurant + '\n' )
+    return reply
 
 # check if the value of data['restaurant'] is not empty   
 def hasRestaurant():
