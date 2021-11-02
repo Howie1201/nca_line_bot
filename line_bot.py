@@ -89,7 +89,7 @@ def handle_message(event):
         reply = description
             
     if command == '餐廳':
-        reply  = listRestaurant()
+        reply  = order_lib.listRestaurant()
     
     if command == '吃':
         admin = order_lib.checkAuthority(userId)
