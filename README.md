@@ -1,5 +1,25 @@
 # 點餐bot
 
+## 專案介紹
+
+為了減少團訂午餐花費的時間，同時減少人為的疏失，一時興起開發的專案。
+
+使用語言主要是python，是個以line bot api和flask為核心，heroku為server打造的line bot專案。
+
+很多東西都是首次嘗試，還有很多可以改進的地方，目前正在一邊學習一邊持續更新。
+
+## 如何使用
+
+1. 先註冊好Line developer和heroku
+
+2. 將主程式line_bot.py當中的line_bot_api, handler, app_name等變數改成自己的
+
+3. 將data/data.json中的admin和groupId等修改成自己要用的
+
+4. 額外加入自己想要的feature，並部屬到heroku
+
+5. 大功告成，有問題的話找專案的原作者，我會盡量排解
+
 ## 目前接受指令
 
 聽取使用說明:
@@ -34,7 +54,7 @@
 
 `截止/`
 
-清除今日的訂餐資料:
+清除訂餐資料:
 
 `clear/`
 
@@ -43,6 +63,9 @@
 ![](https://i.imgur.com/e0TbX29.jpg)
 
 ![](https://i.imgur.com/lMqG3IZ.jpg)
+
+## 
+
 
 ## 注意事項
 

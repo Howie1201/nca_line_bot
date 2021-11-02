@@ -22,6 +22,7 @@ app = Flask(__name__)
 line_bot_api = LineBotApi('KbUSP5ShwG5gziWRdy3niYUieAZaYlDc2YMW1HB3Ao05YRm+DKUar29lK0lfqjeMqzLRm1MLALf/R4jIV/k+98YxIR40SryCI8qsokVBe31heMMafyPQSI89odk42Ts1dD9b35gyPMCkOhHEGp+M/wdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('b33a01e1e548c7b39a732d62245e1d36')
 app_name = 'eatwhat-in-ncu'
+
 domain_name = 'https://' + app_name + '.herokuapp.com/'
 
 
