@@ -126,13 +126,13 @@ def handle_message(event):
             menu = order_lib.getMenu(restaurant)        
             foods = order_lib.countOrder(orders)      
             reply = order_lib.printStatistic(foods, menu)
-            reply += ('\n' + order_lib.showDetailAsHtml(orders, menu, domain_name))
-            
+            reply += ('\n' + order_lib.showDetailAsHtml(line_bot_api, orders, menu, domain_name))
+           
         elif command == '明細':
             orders = order_lib.getOrder()  
             restaurant = order_lib.getRestaurant()
             menu = order_lib.getMenu(restaurant)  
-            reply = order_lib.printDetail(orders, menu)
+            reply = order_lib.printDetail(line_bot_api, orders, menu)
             
         elif command == '截止': 
             admin = order_lib.checkAuthority(user_id)

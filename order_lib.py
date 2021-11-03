@@ -158,15 +158,16 @@ def printStatistic(foods, menu):
     return reply
     
 # write orders into detail.txt which is loaded by detail.html and show to the users
-def showDetailAsHtml(orders, menu, domain_name):
+def showDetailAsHtml(line_bot_api, orders, menu, domain_name):
     if os.path.isfile(detail_path):
         os.remove(detail_path)
     order_no = 1          
     for order in orders:
+        user_name = line_bot_api.get_profile(order[0]).display_name
         food_name = menu[int(order[1])][1]
         food_price = menu[int(order[1])][2]
         with open(detail_path, 'a+', encoding = 'utf-8') as detailFile:    
-            detailFile.write( str(order_no) + '. ' + order[0] + ' / ' + food_name + ' / ' + food_price + '元\n' )
+            detailFile.write( str(order_no) + '. ' + user_name + ' / ' + food_name + ' / ' + food_price + '元\n' )
         order_no += 1
     return domain_name + 'detail'
 
@@ -175,9 +176,10 @@ def printDetail(orders, menu):
     order_no = 1
     reply = ''            
     for order in orders:
+        user_name = line_bot_api.get_profile(order[0]).display_name
         food_name = menu[int(order[1])][1]
         food_price = menu[int(order[1])][2]
-        reply += ( str(order_no) + '. ' + order[0] + '/' + food_name + '/' + food_price + '元\n' )
+        reply += ( str(order_no) + '. ' + user_name + '/' + food_name + '/' + food_price + '元\n' )
         order_no += 1
     return reply
 
