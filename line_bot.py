@@ -93,7 +93,7 @@ def handle_message(event):
         reply  = order_lib.listRestaurant()
     
     elif command == '吃':
-        admin = order_lib.checkAuthority(user_Id)
+        admin = order_lib.checkAuthority(user_id)
         if not admin:
             return         
         restaurant = parameters
@@ -104,7 +104,7 @@ def handle_message(event):
             reply = '查無此餐廳'
             
     elif command == 'clear': 
-        admin = order_lib.checkAuthority(user_Id)
+        admin = order_lib.checkAuthority(user_id)
         if not admin:
             return    
         order_lib.clear()
@@ -113,12 +113,12 @@ def handle_message(event):
     if order_lib.hasRestaurant(): 
                        
         if command == '點':            
-            user_name = line_bot_api.get_profile(user_Id).display_name
-            reply = order_lib.addOrder(user_Id, parameters)
+            #user_name = line_bot_api.get_profile(user_id).display_name
+            reply = order_lib.addOrder(user_id, parameters)
                           
         elif command == '取消':
-            user_name = line_bot_api.get_profile(user_Id).display_name
-            reply = order_lib.cancelOrder(user_Id, parameters)
+            #user_name = line_bot_api.get_profile(user_id).display_name
+            reply = order_lib.cancelOrder(user_id, parameters)
             
         elif command == '統計':      
             orders = order_lib.getOrder()  
@@ -135,13 +135,13 @@ def handle_message(event):
             reply = order_lib.printDetail(orders, menu)
             
         elif command == '截止': 
-            admin = order_lib.checkAuthority(user_Id)
+            admin = order_lib.checkAuthority(user_id)
             if not admin:
                 return
             order_lib.setRestaurant('')   
         
     if command == '成員':
-        admin = order_lib.checkAuthority(user_Id)
+        admin = order_lib.checkAuthority(user_id)
         if not admin:
             return
         member_ids = line_bot_api.get_group_member_ids('Cf4a08527ed49eab9d2cf53a8b0309cf0')
