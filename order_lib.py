@@ -17,14 +17,15 @@ detail_path = 'static/detail.txt'
 # TODO: add comment, optimize
 
 # check if the input message should be handled
-def isCommand(message, groupId):
+def isCommand(message, group_id):
     if not '/' in message:
         return False 
-    if not groupId:
+    if not group_id:
         return False
     else:
         data = getData()
-        if groupId not in data['groupId']:
+        groups = data['group_id']
+        if group_id not in groups.values():
             return False
     return True
 
@@ -40,10 +41,10 @@ def setData(data):
         json.dump(data, jsonFile)
 
 # check if the user is admin
-def checkAuthority(userId):
+def checkAuthority(user_id):
     data = getData()
     admins = data['admin']
-    return True if userId in admins.values() else False
+    return True if user_id in admins.values() else False
 
 # list the restaurants in restaurant folder
 def listRestaurant():
@@ -98,29 +99,31 @@ def checkValidity(order):
     return False
     
 # add order(s) into order.csv
-def addOrder(user_name, orders):
+def addOrder(user_id, orders):
     orders = orders.split('/') 
     with open('data/order.csv', 'a+', encoding = 'utf-8') as orderFile:        
         for order in orders:
             if checkValidity(order):
-                orderFile.write(user_name + ',' + order + '\n')          
+                orderFile.write(user_id + ',' + order + '\n')          
             else:
                 return '請依照格式輸入'
     return '收到'
 
 # cancel and remove order(s) from order.csv
-def cancelOrder(user_name, cancel_orders):
+def cancelOrder(user_id, cancel_orders):
     orders = getOrder()
     os.remove('data/order.csv')
+    # if user does input parameters, cancel particular orders
     if cancel_orders:
         cancel_orders = cancel_orders.split('/')
         for cancel_order in cancel_orders:
             for order in orders:
-                if order[0] != user_name or order[1] != cancel_order:
+                if order[0] != user_id or order[1] != cancel_order:
                     addOrder(order[0], order[1])
+    # if user does not input parameters, cancel all the orders that match user_id 
     else:
         for order in orders:
-            if order[0] != user_name:
+            if order[0] != user_id:
                 addOrder(order[0], order[1])
     return '取消訂單'
     
@@ -180,8 +183,10 @@ def printDetail(orders, menu):
 
 # remove unnecessary files 
 def clear():
-    os.remove(order_path)
-    os.remove(detail_path)
+    if os.path.isfile(order_path):
+        os.remove(order_path)
+    if os.path.isfile(detail_path):
+        os.remove(detail_path)
     
 
     

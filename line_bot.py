@@ -68,18 +68,18 @@ description = '指令輸入格式:\n\
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
-    print(str(event))
+    print(event)
     
     # get user id and message
-    userId = event.source.user_id
-    groupId = ''
+    user_id = event.source.user_id
+    group_Id = ''    
     message_type = event.source.type
     if message_type == 'group':
-        groupId = event.source.group_id
+        group_Id = event.source.group_id
     message = event.message.text
     
     # handle command and string processing    
-    if not order_lib.isCommand(message, groupId):
+    if not order_lib.isCommand(message, group_Id):
         return 
     message = message.replace(' ','').replace('\n','').split('/',1)
     command = message[0]
@@ -89,11 +89,11 @@ def handle_message(event):
     if command == '說明':
         reply = description
             
-    if command == '餐廳':
+    elif command == '餐廳':
         reply  = order_lib.listRestaurant()
     
-    if command == '吃':
-        admin = order_lib.checkAuthority(userId)
+    elif command == '吃':
+        admin = order_lib.checkAuthority(user_Id)
         if not admin:
             return         
         restaurant = parameters
@@ -103,8 +103,8 @@ def handle_message(event):
         else:
             reply = '查無此餐廳'
             
-    if command == 'clear': 
-        admin = order_lib.checkAuthority(userId)
+    elif command == 'clear': 
+        admin = order_lib.checkAuthority(user_Id)
         if not admin:
             return    
         order_lib.clear()
@@ -113,12 +113,12 @@ def handle_message(event):
     if order_lib.hasRestaurant(): 
                        
         if command == '點':            
-            user_name = line_bot_api.get_profile(userId).display_name
-            reply = order_lib.addOrder(user_name, parameters)
+            user_name = line_bot_api.get_profile(user_Id).display_name
+            reply = order_lib.addOrder(user_Id, parameters)
                           
         elif command == '取消':
-            user_name = line_bot_api.get_profile(userId).display_name
-            reply = order_lib.cancelOrder(user_name, parameters)
+            user_name = line_bot_api.get_profile(user_Id).display_name
+            reply = order_lib.cancelOrder(user_Id, parameters)
             
         elif command == '統計':      
             orders = order_lib.getOrder()  
@@ -135,11 +135,22 @@ def handle_message(event):
             reply = order_lib.printDetail(orders, menu)
             
         elif command == '截止': 
-            admin = order_lib.checkAuthority(userId)
+            admin = order_lib.checkAuthority(user_Id)
             if not admin:
                 return
             order_lib.setRestaurant('')   
         
+    if command == '成員':
+        admin = order_lib.checkAuthority(user_Id)
+        if not admin:
+            return
+        member_ids = line_bot_api.get_group_member_ids('Cf4a08527ed49eab9d2cf53a8b0309cf0')
+        for member_id in member_ids:
+            member_info = member_id + ' ' + line_bot_api.get_profile(member_id).display_name + '\n'
+            print(member_info)
+            with open('static/detail.txt', 'w+', encoding = 'utf-8') as f:
+                f.write(member_info)
+    
     if reply:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
 
