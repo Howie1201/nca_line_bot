@@ -82,6 +82,8 @@ def handle_message(event):
     if not order_lib.isCommand(message, group_Id):
         return 
     message = message.replace(' ','').replace('\n','').split('/',1)
+    print(message)
+    
     command = message[0]
     parameters = message[1]  
     reply = ''
@@ -139,7 +141,9 @@ def handle_message(event):
             if not admin:
                 return
             order_lib.setRestaurant('')   
-        
+    '''
+    # This part of code requires verified line official account  
+    
     if command == '成員':
         admin = order_lib.checkAuthority(user_id)
         if not admin:
@@ -150,7 +154,7 @@ def handle_message(event):
             print(member_info)
             with open('static/detail.txt', 'w+', encoding = 'utf-8') as f:
                 f.write(member_info)
-    
+    '''
     if reply:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
 

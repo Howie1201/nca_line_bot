@@ -9,7 +9,8 @@ import json
 import csv
 import os
 
-restaurant_path = 'data/restaurant/'
+restaurant_folder = 'data/restaurant/'
+data_path = 'data/data.json'
 order_path = 'data/order.csv'
 detail_path = 'static/detail.txt'
 #detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
@@ -31,13 +32,13 @@ def isCommand(message, group_id):
 
 # return data in data.json
 def getData():
-    with open('data/data.json', 'r', encoding = 'utf-8') as jsonFile: 
+    with open(data_path, 'r', encoding = 'utf-8') as jsonFile: 
         data = json.load(jsonFile)
     return data 
 
 # edit data in data.json
 def setData(data):
-    with open('data/data.json', 'w', encoding = 'utf-8') as jsonFile: 
+    with open(data_path, 'w', encoding = 'utf-8') as jsonFile: 
         json.dump(data, jsonFile)
 
 # check if the user is admin
@@ -49,7 +50,7 @@ def checkAuthority(user_id):
 # list the restaurants in restaurant folder
 def listRestaurant():
     reply = ''
-    for dirPath, dirNames, fileNames in os.walk(restaurant_path):
+    for dirPath, dirNames, fileNames in os.walk(restaurant_folder):
         for fileName in fileNames:
             restaurant = fileName.split('.')[0]
             reply += ( restaurant + '\n' )
@@ -73,12 +74,12 @@ def setRestaurant(restaurant):
 
 # check if a restaurant's menu is in database 
 def hasMenu(restaurant):
-    restaurant_path = 'data/restaurant/' + restaurant + '.csv'
+    restaurant_path = restaurant_folder + restaurant + '.csv'
     return True if os.path.isfile(restaurant_path) else False
 
 # get a restaurant's menu
 def getMenu(restaurant):
-    with open('data/restaurant/' + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
+    with open(restaurant_folder + restaurant + '.csv', newline = '', encoding = 'utf-8') as menuFile:
         menu = list(csv.reader(menuFile))
         return menu
     
@@ -101,7 +102,7 @@ def checkValidity(order):
 # add order(s) into order.csv
 def addOrder(user_id, orders):
     orders = orders.split('/') 
-    with open('data/order.csv', 'a+', encoding = 'utf-8') as orderFile:        
+    with open(order_path, 'a+', encoding = 'utf-8') as orderFile:        
         for order in orders:
             if checkValidity(order):
                 orderFile.write(user_id + ',' + order + '\n')          
@@ -112,7 +113,7 @@ def addOrder(user_id, orders):
 # cancel and remove order(s) from order.csv
 def cancelOrder(user_id, cancel_orders):
     orders = getOrder()
-    os.remove('data/order.csv')
+    os.remove(order_path)
     # if user does input parameters, cancel particular orders
     if cancel_orders:
         cancel_orders = cancel_orders.split('/')
@@ -129,7 +130,7 @@ def cancelOrder(user_id, cancel_orders):
     
 # return orders
 def getOrder():
-    with open('data/order.csv', newline = '', encoding = 'utf-8') as orderFile:
+    with open(order_path, newline = '', encoding = 'utf-8') as orderFile:
         orders = list(csv.reader(orderFile))
     return orders
 
