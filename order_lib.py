@@ -17,19 +17,6 @@ detail_path = 'static/detail.txt'
 
 # TODO: add comment, optimize
 
-# check if the input message should be handled
-def isCommand(message, group_id):
-    if not '/' in message:
-        return False 
-    if not group_id:
-        return False
-    else:
-        data = getData()
-        groups = data['group_id']
-        if group_id not in groups.values():
-            return False
-    return True
-
 # return data in data.json
 def getData():
     with open(data_path, 'r', encoding = 'utf-8') as jsonFile: 
@@ -41,26 +28,6 @@ def setData(data):
     with open(data_path, 'w', encoding = 'utf-8') as jsonFile: 
         json.dump(data, jsonFile)
 
-# check if the user is admin
-def checkAuthority(user_id):
-    data = getData()
-    admins = data['admin']
-    return True if user_id in admins.values() else False
-
-# list the restaurants in restaurant folder
-def listRestaurant():
-    reply = ''
-    for dirPath, dirNames, fileNames in os.walk(restaurant_folder):
-        for fileName in fileNames:
-            restaurant = fileName.split('.')[0]
-            reply += ( restaurant + '\n' )
-    return reply
-
-# check if the value of data['restaurant'] is not empty   
-def hasRestaurant():
-    data = getData()
-    return True if data['restaurant'] else False
-
 # return today's restaurant
 def getRestaurant():
     data = getData()
@@ -71,11 +38,6 @@ def setRestaurant(restaurant):
     data = getData()
     data['restaurant'] = restaurant
     setData(data)
-
-# check if a restaurant's menu is in database 
-def hasMenu(restaurant):
-    restaurant_path = restaurant_folder + restaurant + '.csv'
-    return True if os.path.isfile(restaurant_path) else False
 
 # get a restaurant's menu
 def getMenu(restaurant):
@@ -199,10 +161,21 @@ def clear():
         os.remove(detail_path)
     
 
-    
-    
-    
-    
-    
-    
-    
+
+'''
+# check if the user is admin
+def checkAuthority(user_id):
+    data = getData()
+    admins = data['admin']
+    return True if user_id in admins.values() else False
+
+# list the restaurants in restaurant folder
+def listRestaurant():
+    reply = ''
+    for dirPath, dirNames, fileNames in os.walk(restaurant_folder):
+        for fileName in fileNames:
+            restaurant = fileName.split('.')[0]
+            reply += ( restaurant + '\n' )
+    return reply
+''' 
+  
