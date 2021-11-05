@@ -4,18 +4,16 @@ Created on Thu Jul 23 15:50:24 2020
 
 @author: jacky
 
-version: 3.0
+version: 3.5
 """
 
 from __future__ import unicode_literals
-import order_lib
-
 from flask import Flask, request, abort, render_template
-#from PIL import Image, ImageDraw, ImageFont
-
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
+
+import order_lib
 
 
 app = Flask(__name__)
@@ -98,6 +96,7 @@ def handle_message(event):
         admin = order_lib.checkAuthority(user_id)
         if not admin:
             return         
+            
         restaurant = parameters
         if order_lib.hasMenu(restaurant):
             order_lib.setRestaurant(restaurant)
@@ -109,17 +108,16 @@ def handle_message(event):
         admin = order_lib.checkAuthority(user_id)
         if not admin:
             return    
+            
         order_lib.clear()
         reply = '清除資料'
             
     if order_lib.hasRestaurant(): 
                        
         if command == '點':            
-            #user_name = line_bot_api.get_profile(user_id).display_name
             reply = order_lib.addOrder(user_id, parameters)
                           
         elif command == '取消':
-            #user_name = line_bot_api.get_profile(user_id).display_name
             reply = order_lib.cancelOrder(user_id, parameters)
             
         elif command == '統計':      
@@ -140,6 +138,7 @@ def handle_message(event):
             admin = order_lib.checkAuthority(user_id)
             if not admin:
                 return
+                
             order_lib.setRestaurant('')   
     '''
     # This part of code requires verified line official account  

@@ -168,6 +168,7 @@ def showDetailAsHtml(line_bot_api, orders, menu, domain_name):
             user_name = line_bot_api.get_profile(order[0]).display_name
         except:
             user_name = order[0]
+        print(user_name)
         food_name = menu[int(order[1])][1]
         food_price = menu[int(order[1])][2]
         with open(detail_path, 'a+', encoding = 'utf-8') as detailFile:    
