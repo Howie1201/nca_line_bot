@@ -163,7 +163,10 @@ def showDetailAsHtml(line_bot_api, orders, menu, domain_name):
         os.remove(detail_path)
     order_no = 1          
     for order in orders:
-        user_name = line_bot_api.get_profile(order[0]).display_name
+        try:
+            user_name = line_bot_api.get_profile(order[0]).display_name
+        except:
+            user_name = order[0]
         food_name = menu[int(order[1])][1]
         food_price = menu[int(order[1])][2]
         with open(detail_path, 'a+', encoding = 'utf-8') as detailFile:    
@@ -172,11 +175,14 @@ def showDetailAsHtml(line_bot_api, orders, menu, domain_name):
     return domain_name + 'detail'
 
 # print orders via line bot
-def printDetail(orders, menu):
+def printDetail(line_bot_api, orders, menu):
     order_no = 1
     reply = ''            
     for order in orders:
-        user_name = line_bot_api.get_profile(order[0]).display_name
+        try:
+            user_name = line_bot_api.get_profile(order[0]).display_name
+        except:
+            user_name = order[0]
         food_name = menu[int(order[1])][1]
         food_price = menu[int(order[1])][2]
         reply += ( str(order_no) + '. ' + user_name + '/' + food_name + '/' + food_price + '元\n' )
