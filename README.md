@@ -10,15 +10,15 @@
 
 ## 如何使用
 
-1. 先註冊好Line developer和heroku
+1. 註冊Line developer和heroku，並將環境設置好
 
-2. 將主程式line_bot.py當中的line_bot_api, handler, app_name等變數改成自己的
+2. 將主程式line_bot.py中的line_bot_api, handler, app_name等變數改成自己的
 
-3. 將data/data.json中的admin和group_id等修改成自己要用的，admin代表管理員，group_id表示需要使用機器人的群組，group_id可在
+3. 將主程式line_bot.py中的admins, groups, restaurants等變數修改成自己要用的，admins代表管理員，groups代表需要使用機器人的群組，user_id, group_id等資訊可在heroku後台查看
 
-4. 額外加入自己想要的feature，並部屬到heroku
+4. 額外加入自己想要的feature，deploy到heroku
 
-5. 大功告成，有問題的話找專案的原作者，我會盡量排解
+5. 大功告成，有問題的話找專案的原作者(我)，會盡量排解
 
 ## 目前接受指令
 
