@@ -14,7 +14,7 @@
 
 2. 將主程式line_bot.py當中的line_bot_api, handler, app_name等變數改成自己的
 
-3. 將data/data.json中的admin和groupId等修改成自己要用的
+3. 將data/data.json中的admin和group_id等修改成自己要用的，admin代表管理員，group_id表示需要使用機器人的群組，group_id可在
 
 4. 額外加入自己想要的feature，並部屬到heroku
 

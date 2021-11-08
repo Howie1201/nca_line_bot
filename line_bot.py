@@ -100,7 +100,7 @@ def handle_message(event):
     group_id = event.source.group_id if message_type == 'group' else ''
       
     # handle command and process string    
-    if not order_lib.isCommand(message, group_id):
+    if not isCommand(message, group_id):
         return 
     message = message.replace(' ','').replace('\n','').split('/',1)
     print(message)
