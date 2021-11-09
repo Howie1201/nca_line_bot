@@ -56,7 +56,7 @@ def printMenu(restaurant):
 
 # check if user's input is valid
 def checkValidity(order):  
-    menu = getMenu(getRestaurant() 
+    menu = getMenu(getRestaurant())
     if order.isnumeric():
         if int(order) > 0 and int(order) < len(menu):
             return True
