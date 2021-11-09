@@ -29,7 +29,6 @@ groups = {"午餐群組" : "Cf4a08527ed49eab9d2cf53a8b0309cf0",
 restaurants = ['大盛','小煮角','六星','日日佳','甲一','皇上皇','華圓','寶多福']
 
 
-
 domain_name = 'https://' + app_name + '.herokuapp.com/'
 description = '指令輸入格式:\n\
 [指令]/[內容1]/[內容2]...\n\
@@ -37,6 +36,7 @@ description = '指令輸入格式:\n\
 指令:\n\
 說明、吃、點、取消、統計、截止、clear\n\
 詳細說明請見https://github.com/jackyh1999/line_bot'
+
 
 @app.route("/")
 def home():

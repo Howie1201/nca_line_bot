@@ -50,12 +50,13 @@ def printMenu(restaurant):
     reply = ''
     menu = getMenu(restaurant)
     for food in menu:
+        # no. / name / price
         reply += ( food[0] + '. ' + food[1] + ' ' + food[2] + '\n' )  
     return reply
 
 # check if user's input is valid
-def checkValidity(order):
-    menu = getMenu(getRestaurant())
+def checkValidity(order):  
+    menu = getMenu(getRestaurant() 
     if order.isnumeric():
         if int(order) > 0 and int(order) < len(menu):
             return True
@@ -66,7 +67,8 @@ def addOrder(user_id, orders):
     orders = orders.split('/') 
     with open(order_path, 'a+', encoding = 'utf-8') as orderFile:        
         for order in orders:
-            if checkValidity(order):
+            # validate parameter
+            if isnumeric(order):
                 orderFile.write(user_id + ',' + order + '\n')          
             else:
                 return '請依照格式輸入'
@@ -100,23 +102,23 @@ def getOrder():
 def countOrder(orders):
     foods = {}
     for order in orders:
-        if order[1] in foods:
-            foods[order[1]] += 1
-        else:
-            foods[order[1]] = 1
+        foods[order[1]] = foods[order[1]] + 1 if order[1] in foods else 1
     return foods
 
 # print each items' number, total number, and price
 def printStatistic(foods, menu):
     reply = ''
     total = 0
-    total_price = 0          
+    total_price = 0
     for food in foods:
-        food_name = menu[int(food)][1]
-        food_price = menu[int(food)][2]
-        reply += ( food_name + ' ' + str(foods[food]) + '份\n')
-        total += foods[food]
-        total_price += ( int(food_price) * foods[food] )    
+        try:
+            food_name = menu[int(food)][1]
+            food_price = menu[int(food)][2]
+            reply += ( food_name + ' ' + str(foods[food]) + '份\n')
+            total += foods[food]
+            total_price += ( int(food_price) * foods[food] )
+        except:
+            reply += '查無資料\n'                 
     reply += ( '共' + str(total) + '份' + str(total_price) + '元' )
     return reply
     
@@ -130,7 +132,7 @@ def showDetailAsHtml(line_bot_api, orders, menu, domain_name):
             user_name = line_bot_api.get_profile(order[0]).display_name
         except:
             user_name = order[0]
-        print(user_name)
+        # print(user_name)
         food_name = menu[int(order[1])][1]
         food_price = menu[int(order[1])][2]
         with open(detail_path, 'a+', encoding = 'utf-8') as detailFile:    
@@ -160,7 +162,6 @@ def clear():
     if os.path.isfile(detail_path):
         os.remove(detail_path)
     
-
 
 '''
 # check if the user is admin
