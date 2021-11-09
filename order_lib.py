@@ -68,7 +68,7 @@ def addOrder(user_id, orders):
     with open(order_path, 'a+', encoding = 'utf-8') as orderFile:        
         for order in orders:
             # validate parameter
-            if isnumeric(order):
+            if order.isnumeric():
                 orderFile.write(user_id + ',' + order + '\n')          
             else:
                 return '請依照格式輸入'
