@@ -81,10 +81,11 @@ def cancelOrder(user_id, cancel_orders):
     # if user does input parameters, cancel particular orders
     if cancel_orders:
         cancel_orders = cancel_orders.split('/')
-        for cancel_order in cancel_orders:
-            for order in orders:
-                if order[0] != user_id or order[1] != cancel_order:
-                    addOrder(order[0], order[1])
+        for order in orders:
+            if order[0] != user_id:
+                addOrder(order[0], order[1])
+            elif order[1] not in cancel_orders:
+                addOrder(order[0], order[1])
     # if user does not input parameters, cancel all the orders that match user_id 
     else:
         for order in orders:
@@ -132,7 +133,6 @@ def showDetailAsHtml(line_bot_api, orders, menu, domain_name):
             user_name = line_bot_api.get_profile(order[0]).display_name
         except:
             user_name = order[0]
-        # print(user_name)
         food_name = menu[int(order[1])][1]
         food_price = menu[int(order[1])][2]
         with open(detail_path, 'a+', encoding = 'utf-8') as detailFile:    
@@ -162,21 +162,4 @@ def clear():
     if os.path.isfile(detail_path):
         os.remove(detail_path)
     
-
-'''
-# check if the user is admin
-def checkAuthority(user_id):
-    data = getData()
-    admins = data['admin']
-    return True if user_id in admins.values() else False
-
-# list the restaurants in restaurant folder
-def listRestaurant():
-    reply = ''
-    for dirPath, dirNames, fileNames in os.walk(restaurant_folder):
-        for fileName in fileNames:
-            restaurant = fileName.split('.')[0]
-            reply += ( restaurant + '\n' )
-    return reply
-''' 
   
