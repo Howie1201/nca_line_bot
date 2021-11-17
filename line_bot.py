@@ -84,7 +84,6 @@ def isAdmin(user_id):
 ''''''''''''''''''
 '''主要程式在這'''
 ''''''''''''''''''
-
 # decorator 判斷 event 為 MessageEvent
 # event.message 為 TextMessage 
 # 所以此為處理 TextMessage 的 handler
