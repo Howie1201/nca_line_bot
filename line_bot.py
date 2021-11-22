@@ -4,7 +4,7 @@ Created on Thu Jul 23 15:50:24 2020
 
 @author: jacky
 
-version: 3.5
+version: 4.0
 """
 
 from __future__ import unicode_literals
@@ -13,6 +13,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
+import random
 import order_lib
 
 
@@ -26,7 +27,7 @@ admins = {"洪仲杰" : "Uefa7580b75912cf5cbd1be6dba8dafbe",
 		  "蕭崇聖" : "U45eac4b2d3598d5bb9ee33cee0518d45"}
 groups = {"午餐群組" : "Cf4a08527ed49eab9d2cf53a8b0309cf0",
 		  "測試群組" : "Ce6071d5887fd879bc620143fce3c8382"}
-restaurants = ['大盛','小煮角','六星','日日佳','甲一','皇上皇','華圓','寶多福','小林','月枱','南投六星']
+restaurants = ['大盛','小煮角','六星','日日佳','甲一','皇上皇','華圓','寶多福','小林','月枱']
 
 
 domain_name = 'https://' + app_name + '.herokuapp.com/'
@@ -117,6 +118,10 @@ def handle_message(event):
     elif command == '餐廳':
         for restaurant in restaurants:
             reply += ( restaurant + '\n' )
+    
+    elif command == '抽籤':
+        random_index = random.randint(1,len(restaurants))-1
+        reply = '抽籤結果是...\n\n' + restaurants[random_index] + '！'
     
     # 決定要吃的餐廳
     # 需要admin權限
