@@ -27,7 +27,7 @@ admins = {"洪仲杰" : "Uefa7580b75912cf5cbd1be6dba8dafbe",
 		  "蕭崇聖" : "U45eac4b2d3598d5bb9ee33cee0518d45"}
 groups = {"午餐群組" : "Cf4a08527ed49eab9d2cf53a8b0309cf0",
 		  "測試群組" : "Ce6071d5887fd879bc620143fce3c8382"}
-restaurants = ['大盛','小煮角','六星','日日佳','甲一','皇上皇','華圓','寶多福','小林','月枱']
+restaurants = ['大盛','六星','日日佳','甲一','皇上皇','華圓','寶多福','小林','月枱','呂媽媽']
 
 
 domain_name = 'https://' + app_name + '.herokuapp.com/'
