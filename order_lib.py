@@ -15,8 +15,6 @@ order_path = 'data/order.csv'
 detail_path = 'static/detail.txt'
 #detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
 
-# TODO: add comment, optimize
-
 # return data in data.json
 def getData():
     with open(data_path, 'r', encoding = 'utf-8') as jsonFile: 
