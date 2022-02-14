@@ -16,13 +16,17 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import random
 import order_lib
 
-
 app = Flask(__name__)
 
+
+# 變數
+
+# 設定api, webhook, app name 
 line_bot_api = LineBotApi('KbUSP5ShwG5gziWRdy3niYUieAZaYlDc2YMW1HB3Ao05YRm+DKUar29lK0lfqjeMqzLRm1MLALf/R4jIV/k+98YxIR40SryCI8qsokVBe31heMMafyPQSI89odk42Ts1dD9b35gyPMCkOhHEGp+M/wdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('b33a01e1e548c7b39a732d62245e1d36')
 app_name = 'eatwhat-in-ncu'
 
+# 管理員、可用群組、餐廳名單
 admins = {"洪仲杰" : "Uefa7580b75912cf5cbd1be6dba8dafbe",
 		  "陳宜祥" : "U75851bf4cd33d189464170b50df30ee8",
 		  "蕭崇聖" : "U45eac4b2d3598d5bb9ee33cee0518d45",
@@ -32,7 +36,7 @@ groups = {"午餐群組" : "Cf4a08527ed49eab9d2cf53a8b0309cf0",
 restaurants = ['大盛','六星','日日佳','甲一','皇上皇','華圓','寶多福','小林','月枱','呂媽媽',
                '佳臻','小煮角','中一排骨']
 
-
+# 網域名稱、機器人使用說明
 domain_name = 'https://' + app_name + '.herokuapp.com/'
 description = '指令輸入格式:\n\
 [指令]/[內容1]/[內容2]...\n\
@@ -41,7 +45,7 @@ description = '指令輸入格式:\n\
 說明、吃、點、取消、統計、截止、clear\n\
 詳細說明請見https://github.com/jackyh1999/line_bot'
 
-
+# root
 @app.route("/")
 def home():
     return 'Hello world!'
@@ -64,25 +68,11 @@ def callback():
         abort(400)
     return 'OK'
 
-
+# return 明細表
 @app.route("/detail")
 def showDetail():
     return render_template('detail.html')
-    
-
-# check if the input message should be handled
-def isCommand(message, group_id):
-    if not '/' in message:
-        return False 
-    if group_id not in groups.values():
-        return False
-    return True
-
-# check if the user is admin
-def isAdmin(user_id):
-    if user_id not in admins.values():
-        return False
-    return True
+ 
 
 ''''''''''''''''''
 '''主要程式在這'''
@@ -95,14 +85,15 @@ def handle_message(event):
 
     print(event)
     
-    # get user id and message  
+    # get user id, group id and message  
     message = event.message.text 
     message_type = event.source.type
     user_id = event.source.user_id     
     group_id = event.source.group_id if message_type == 'group' else ''
       
     # handle command and process string    
-    if not isCommand(message, group_id):
+    # 字串需要包含'/'以及在指定群組才做處理
+    if '/' not in message or group_id not in groups.values():
         return 
     message = message.replace(' ','').replace('\n','').split('/',1)
     print(message)
@@ -121,15 +112,14 @@ def handle_message(event):
         for restaurant in restaurants:
             reply += ( restaurant + '\n' )
     
+    # 隨機選餐廳
     elif command == '抽籤':
         random_index = random.randint(1,len(restaurants))-1
         reply = '抽籤結果是...\n\n' + restaurants[random_index] + '！'
     
     # 決定要吃的餐廳
     # 需要admin權限
-    elif command == '吃':
-        if not isAdmin(user_id):
-            return                     
+    elif command == '吃' and user_id in admins.values():                
         restaurant = parameters
         if restaurant in restaurants:
             order_lib.setRestaurant(restaurant)
@@ -139,9 +129,7 @@ def handle_message(event):
         
     # 清除訂餐資料
     # 需要admin權限
-    elif command == '清除': 
-        if not isAdmin(user_id):
-            return           
+    elif command == '清除' and user_id in admins.values():        
         order_lib.clear()
         reply = '清除資料'
             
@@ -174,9 +162,7 @@ def handle_message(event):
             
         # 關閉點餐
         # 需要admin權限
-        elif command == '截止': 
-            if not isAdmin(user_id):
-                return            
+        elif command == '截止' and user_id in admins.values():       
             order_lib.setRestaurant('')   
             
     '''
@@ -198,6 +184,6 @@ def handle_message(event):
     if reply:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
 
-
+# main func
 if __name__ == '__main__':
     app.run()
