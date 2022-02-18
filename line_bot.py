@@ -22,17 +22,13 @@ app = Flask(__name__)
 # 變數
 
 # 設定api, webhook, app name 
-line_bot_api = LineBotApi('KbUSP5ShwG5gziWRdy3niYUieAZaYlDc2YMW1HB3Ao05YRm+DKUar29lK0lfqjeMqzLRm1MLALf/R4jIV/k+98YxIR40SryCI8qsokVBe31heMMafyPQSI89odk42Ts1dD9b35gyPMCkOhHEGp+M/wdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('b33a01e1e548c7b39a732d62245e1d36')
+line_bot_api = LineBotApi('linebotapi')
+handler = WebhookHandler('webhookhandler')
 app_name = 'eatwhat-in-ncu'
 
 # 管理員、可用群組、餐廳名單
-admins = {"洪仲杰" : "Uefa7580b75912cf5cbd1be6dba8dafbe",
-		  "陳宜祥" : "U75851bf4cd33d189464170b50df30ee8",
-		  "蕭崇聖" : "U45eac4b2d3598d5bb9ee33cee0518d45",
-          "賴冠鏵" : "U3ff60662d9e6b90835aa52fa8cfb6ef5"}
-groups = {"午餐群組" : "Cf4a08527ed49eab9d2cf53a8b0309cf0",
-		  "測試群組" : "Ce6071d5887fd879bc620143fce3c8382"}
+admins = {}
+groups = {}
 restaurants = ['大盛','六星','日日佳','甲一','皇上皇','華圓','寶多福','小林','月枱','呂媽媽',
                '佳臻','小煮角','中一排骨']
 
