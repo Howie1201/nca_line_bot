@@ -13,7 +13,7 @@ restaurant_folder = 'data/restaurant/'
 data_path = 'data/data.json'
 order_path = 'data/order.csv'
 detail_path = 'static/detail.txt'
-#detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
+# detail_url = 'https://eatwhat-in-ncu.herokuapp.com/detail'
 
 # return data in data.json
 def getData():
