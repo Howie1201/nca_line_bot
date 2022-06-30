@@ -27,30 +27,34 @@ handler = WebhookHandler('b33a01e1e548c7b39a732d62245e1d36')
 app_name = 'eatwhat-in-ncu'
 
 # 管理員、可用群組、餐廳名單
-admins = {  "洪仲杰" : "Uefa7580b75912cf5cbd1be6dba8dafbe",
-#           "陳宜祥" : "U75851bf4cd33d189464170b50df30ee8",
-            "蕭崇聖" : "U45eac4b2d3598d5bb9ee33cee0518d45",
-            "賴冠鏵" : "U3ff60662d9e6b90835aa52fa8cfb6ef5",
-            "林俊宇" : "U0772fe2a09529c65b7a7c0163a92feda",
-            "陳怡誠" : "Ua96931bfef5d06d91250f883559a0750",
-            "洪梓彧" : "U0689f87646c44772528af8b2b4405117",
-            "張晉源" : "Ue8f9f131ad9ce7a424ec19b1fd82b076"}
-groups = {  "午餐群組" : "Cf4a08527ed49eab9d2cf53a8b0309cf0",
-            "測試群組" : "Ce6071d5887fd879bc620143fce3c8382"}
-restaurants = ['大盛','六星','日日佳','甲一','皇上皇','華圓','寶多福','小林','月枱','呂媽媽',
-               '佳臻','小煮角','中一排骨']
+admins = [
+    'Uefa7580b75912cf5cbd1be6dba8dafbe', # 洪仲杰
+    # 'U75851bf4cd33d189464170b50df30ee8', # 陳宜祥
+    'U45eac4b2d3598d5bb9ee33cee0518d45', # 蕭崇聖
+    'U3ff60662d9e6b90835aa52fa8cfb6ef5', # 賴冠鏵
+    'U0772fe2a09529c65b7a7c0163a92feda', # 林俊宇
+    'Ua96931bfef5d06d91250f883559a0750', # 陳怡誠
+    'U0689f87646c44772528af8b2b4405117', # 洪梓彧
+    'Ue8f9f131ad9ce7a424ec19b1fd82b076', # 張晉源
+]
+groups = [
+    'Cf4a08527ed49eab9d2cf53a8b0309cf0', # 午餐群組
+    'Ce6071d5887fd879bc620143fce3c8382', # 測試群組
+]
+restaurants = [
+    '大盛', '六星', '日日佳', '甲一', '皇上皇',
+    '華圓', '寶多福', '小林', '月枱', '呂媽媽',
+    '佳臻', '小煮角', '中一排骨'
+]
 
 # 網域名稱、機器人使用說明
 domain_name = 'https://' + app_name + '.herokuapp.com/'
-description = '指令輸入格式:\n\
-[指令]/[內容1]/[內容2]...\n\
-\n\
-指令:\n\
-說明、吃、點、取消、統計、截止、clear\n\
-詳細說明請見https://github.com/jackyh1999/line_bot'
+description = '指令輸入格式：[指令]/[內容1]/[內容2]...\n\
+指令：說明、吃、點、取消、統計、截止、清除\n\
+詳見 https://github.com/jackyh1999/line_bot'
 
 # root
-@app.route("/")
+@app.route('/')
 def home():
     return 'Hello world!'
 
@@ -78,9 +82,9 @@ def showDetail():
     return render_template('detail.html')
  
 
-''''''''''''''''''
-'''主要程式在這'''
-''''''''''''''''''
+
+### 主程式
+
 # decorator 判斷 event 為 MessageEvent
 # event.message 為 TextMessage 
 # 所以此為處理 TextMessage 的 handler
@@ -168,22 +172,7 @@ def handle_message(event):
         # 需要admin權限
         elif command == '截止' and user_id in admins.values():       
             order_lib.setRestaurant('')   
-            
-    '''
-    # This part of code requires verified line official account  
-    
-    if command == '成員':
-        admin = order_lib.checkAuthority(user_id)
-        if not admin:
-            return
-        member_ids = line_bot_api.get_group_member_ids('Cf4a08527ed49eab9d2cf53a8b0309cf0')
-        for member_id in member_ids:
-            member_info = member_id + ' ' + line_bot_api.get_profile(member_id).display_name + '\n'
-            print(member_info)
-            with open('static/detail.txt', 'w+', encoding = 'utf-8') as f:
-                f.write(member_info)
-    '''
-    
+
     # 回覆訊息
     if reply:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(reply))
