@@ -21,7 +21,7 @@ app = Flask(__name__)
 
 # 變數
 
-# 設定api, webhook, app name 
+# 設定api, webhook, app name
 line_bot_api = LineBotApi('KbUSP5ShwG5gziWRdy3niYUieAZaYlDc2YMW1HB3Ao05YRm+DKUar29lK0lfqjeMqzLRm1MLALf/R4jIV/k+98YxIR40SryCI8qsokVBe31heMMafyPQSI89odk42Ts1dD9b35gyPMCkOhHEGp+M/wdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('b33a01e1e548c7b39a732d62245e1d36')
 app_name = 'eatwhat-in-ncu'
@@ -80,98 +80,98 @@ def callback():
 @app.route("/detail")
 def showDetail():
     return render_template('detail.html')
- 
+
 
 
 ### 主程式
 
 # decorator 判斷 event 為 MessageEvent
-# event.message 為 TextMessage 
+# event.message 為 TextMessage
 # 所以此為處理 TextMessage 的 handler
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
 
     print(event)
-    
-    # get user id, group id and message  
-    message = event.message.text 
+
+    # get user id, group id and message
+    message = event.message.text
     message_type = event.source.type
-    user_id = event.source.user_id     
+    user_id = event.source.user_id
     group_id = event.source.group_id if message_type == 'group' else ''
-      
-    # handle command and process string    
+
+    # handle command and process string
     # 字串需要包含'/'以及在指定群組才做處理
     if '/' not in message or group_id not in groups.values():
-        return 
+        return
     message = message.replace(' ','').replace('\n','').split('/',1)
     print(message)
-    
+
     # command's format: [command, parameters]
     command = message[0]
-    parameters = message[1]  
+    parameters = message[1]
     reply = ''
-    
+
     # 使用說明
     if command == '說明':
         reply = description
-            
+
     # 列出可提供菜單的餐廳
     elif command == '餐廳':
         for restaurant in restaurants:
             reply += ( restaurant + '\n' )
-    
+
     # 隨機選餐廳
     elif command == '抽籤':
         random_index = random.randint(1,len(restaurants))-1
         reply = '抽籤結果是...\n\n' + restaurants[random_index] + '！'
-    
+
     # 決定要吃的餐廳
     # 需要admin權限
-    elif command == '吃' and user_id in admins.values():                
+    elif command == '吃' and user_id in admins.values():
         restaurant = parameters
         if restaurant in restaurants:
             order_lib.setRestaurant(restaurant)
             reply = order_lib.printMenu(restaurant)
         else:
             reply = '查無此餐廳'
-        
+
     # 清除訂餐資料
     # 需要admin權限
-    elif command == '清除' and user_id in admins.values():        
+    elif command == '清除' and user_id in admins.values():
         order_lib.clear()
         reply = '清除資料'
-            
+
     # 已經決定好餐廳才能使用的指令
-    if order_lib.getRestaurant():           
-        
-        # 點餐             
-        if command == '點':            
+    if order_lib.getRestaurant():
+
+        # 點餐
+        if command == '點':
             reply = order_lib.addOrder(user_id, parameters)
-                          
+
         # 取消點餐
         elif command == '取消':
             reply = order_lib.cancelOrder(user_id, parameters)
-            
+
         # 統計餐點並顯示明細表(網頁)
-        elif command == '統計':      
-            orders = order_lib.getOrder()  
+        elif command == '統計':
+            orders = order_lib.getOrder()
             restaurant = order_lib.getRestaurant()
-            menu = order_lib.getMenu(restaurant)        
-            foods = order_lib.countOrder(orders)      
+            menu = order_lib.getMenu(restaurant)
+            foods = order_lib.countOrder(orders)
             reply = order_lib.printStatistic(foods, menu)
             reply += ('\n' + order_lib.showDetailAsHtml(line_bot_api, orders, menu, domain_name))
-           
+
         # 回覆明細表
         elif command == '明細':
-            orders = order_lib.getOrder()  
+            orders = order_lib.getOrder()
             restaurant = order_lib.getRestaurant()
-            menu = order_lib.getMenu(restaurant)  
+            menu = order_lib.getMenu(restaurant)
             reply = order_lib.printDetail(line_bot_api, orders, menu)
-            
+
         # 關閉點餐
         # 需要admin權限
-        elif command == '截止' and user_id in admins.values():       
-            order_lib.setRestaurant('')   
+        elif command == '截止' and user_id in admins.values():
+            order_lib.setRestaurant('')
 
     # 回覆訊息
     if reply:
