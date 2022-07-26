@@ -36,6 +36,7 @@ admins = [
     'Ua96931bfef5d06d91250f883559a0750', # 陳怡誠
     'U0689f87646c44772528af8b2b4405117', # 洪梓彧
     'Ue8f9f131ad9ce7a424ec19b1fd82b076', # 張晉源
+    'Ua59365fbb102cc87cc9781390c48c5f9', # 曾國豪
 ]
 groups = [
     'Cf4a08527ed49eab9d2cf53a8b0309cf0', # 午餐群組
